@@ -102,7 +102,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         <!--main content start-->
         <section id="main-content">
             <section class="wrapper">
-                <h3>Chào mừng bạn đến với Admin</h3>
+                @yield('admin_content')
             </section>
             <!-- footer -->
             <div class="footer">
