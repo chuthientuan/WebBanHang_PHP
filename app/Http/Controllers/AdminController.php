@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redirect;
+session_start();
 class AdminController extends Controller
 {
     public function index() {
@@ -24,11 +27,18 @@ class AdminController extends Controller
             ->first();
 
         if ($result) {
-            // Đăng nhập thành công
-            return view('admin.dashboard');
+            Session::put('admin_name', $result->admin_name);
+            Session::put('admin_id', $result->admin_id);
+            return Redirect::to('/dashboard');
         } else {
             // Đăng nhập thất bại
             return redirect()->back()->with('message', 'Email hoặc mật khẩu không đúng!');
         }
+    }
+
+    public function logOut() {
+        Session::put('admin_name', null);
+        Session::put('admin_id', null);
+        return Redirect::to('/admin');
     }
 }
