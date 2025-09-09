@@ -23,7 +23,7 @@ class AdminController extends Controller
 
         $result = DB::table('tbl_admin')
             ->where('admin_email', $admin_email)
-            ->where('admin_password', $admin_password)
+            ->where('admin_password', $admin_password)  
             ->first();
 
         if ($result) {

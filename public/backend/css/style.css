@@ -48,6 +48,15 @@ body a:hover{
     -o-transition:all .3s ease-in-out;
     transition:all .3s ease-in-out;
 }
+.fa-thumbs-down:before {
+    color: red;
+    font-size: 28px;
+    content: "\f165";
+}
+.fa-thumbs-up:before {
+    font-size: 28px;
+    content: "\f165";
+}
 #sidebar ul li {
     position: relative;
 }

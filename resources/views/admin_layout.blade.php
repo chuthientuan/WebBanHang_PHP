@@ -56,7 +56,7 @@
                             <img alt="" src="backend/images/2.png">
                             <span class="username">
                                 <?php
-                                    $name = Session::get('admin_name');
+                                    $name = session('admin_name');
                                     if ($name) {
                                         echo $name;
                                     }
@@ -96,8 +96,8 @@
                                 <span>Danh mục sản phẩm</span>
                             </a>
                             <ul class="sub">
-                                <li><a href="typography.html">Thêm danh mục</a></li>
-                                <li><a href="glyphicon.html">Liệt kê danh mục</a></li>
+                                <li><a href="{{URL::to('/add-category-product')}}">Thêm danh mục sản phẩm </a></li>
+                                <li><a href="{{URL::to('/all-category-product')}}">Liệt kê danh mục sản phẩm </a></li>
                             </ul>
                         </li>
                     </ul>
