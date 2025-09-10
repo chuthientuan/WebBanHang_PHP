@@ -106,6 +106,18 @@
                                 </li>
                             </ul>
                         </li>
+
+                        <li class="sub-menu">
+                            <a href="javascript:;">
+                                <i class="fa fa-book"></i>
+                                <span>Thêm sản phẩm</span>
+                            </a>
+                            <ul class="sub">
+                                <li><a href="{{ URL::to('/add-product') }}">Thêm sản phẩm </a></li>
+                                <li><a href="{{ URL::to('/all-product') }}">Liệt kê danh mục sản phẩm </a>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
                 <!-- sidebar menu end-->
