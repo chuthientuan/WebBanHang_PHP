@@ -9,26 +9,19 @@
             Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
     <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
     <!-- bootstrap-css -->
-    <link rel="stylesheet" href="backend/css/bootstrap.min.css">
-    <!-- //bootstrap-css -->
-    <!-- Custom CSS -->
-    <link href="backend/css/style.css" rel='stylesheet' type='text/css' />
-    <link href="backend/css/style-responsive.css" rel="stylesheet" />
-    <!-- font CSS -->
+    <link rel="stylesheet" href="{{ asset('backend/css/bootstrap.min.css') }}">
+    <link href="{{ asset('backend/css/style.css') }}" rel='stylesheet' type='text/css' />
+    <link href="{{ asset('backend/css/style-responsive.css') }}" rel="stylesheet" />
     <link
         href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic'
         rel='stylesheet' type='text/css'>
-    <!-- font-awesome icons -->
-    <link rel="stylesheet" href="backend/css/font.css" type="text/css" />
-    <link href="backend/css/font-awesome.css" rel="stylesheet">
-    <link rel="stylesheet" href="backend/css/morris.css" type="text/css" />
-    <!-- calendar -->
-    <link rel="stylesheet" href="backend/css/monthly.css">
-    <!-- //calendar -->
-    <!-- //font-awesome icons -->
-    <script src="backend/js/jquery2.0.3.min.js"></script>
-    <script src="backend/js/raphael-min.js"></script>
-    <script src="backend/js/morris.js"></script>
+    <link rel="stylesheet" href="{{ asset('backend/css/font.css') }}" type="text/css" />
+    <link href="{{ asset('backend/css/font-awesome.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('backend/css/morris.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('backend/css/monthly.css') }}">
+    <script src="{{ asset('backend/js/jquery2.0.3.min.js') }}"></script>
+    <script src="{{ asset('backend/js/raphael-min.js') }}"></script>
+    <script src="{{ asset('backend/js/morris.js') }}"></script>
 </head>
 
 <body>
@@ -56,10 +49,10 @@
                             <img alt="" src="backend/images/2.png">
                             <span class="username">
                                 <?php
-                                    $name = session('admin_name');
-                                    if ($name) {
-                                        echo $name;
-                                    }
+                                $name = session('admin_name');
+                                if ($name) {
+                                    echo $name;
+                                }
                                 ?>
                             </span>
                             <b class="caret"></b>
@@ -67,7 +60,7 @@
                         <ul class="dropdown-menu extended logout">
                             <li><a href="#"><i class=" fa fa-suitcase"></i>Profile</a></li>
                             <li><a href="#"><i class="fa fa-cog"></i> Settings</a></li>
-                            <li><a href="{{URL::to('/logOut')}}"><i class="fa fa-key"></i> Log Out</a></li>
+                            <li><a href="{{ URL::to('/logOut') }}"><i class="fa fa-key"></i> Log Out</a></li>
                         </ul>
                     </li>
                     <!-- user login dropdown end -->
@@ -84,7 +77,7 @@
                 <div class="leftside-navigation">
                     <ul class="sidebar-menu" id="nav-accordion">
                         <li>
-                            <a class="active" href="{{URL::to('/dashboard')}}">
+                            <a class="active" href="{{ URL::to('/dashboard') }}">
                                 <i class="fa fa-dashboard"></i>
                                 <span>Tổng quan</span>
                             </a>
@@ -96,8 +89,21 @@
                                 <span>Danh mục sản phẩm</span>
                             </a>
                             <ul class="sub">
-                                <li><a href="{{URL::to('/add-category-product')}}">Thêm danh mục sản phẩm </a></li>
-                                <li><a href="{{URL::to('/all-category-product')}}">Liệt kê danh mục sản phẩm </a></li>
+                                <li><a href="{{ URL::to('/add-category-product') }}">Thêm danh mục sản phẩm </a></li>
+                                <li><a href="{{ URL::to('/all-category-product') }}">Liệt kê danh mục sản phẩm </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="sub-menu">
+                            <a href="javascript:;">
+                                <i class="fa fa-book"></i>
+                                <span>Thương hiệu sản phẩm</span>
+                            </a>
+                            <ul class="sub">
+                                <li><a href="{{ URL::to('/add-brand-product') }}">Thương hiệu sản phẩm </a></li>
+                                <li><a href="{{ URL::to('/all-brand-product') }}">Liệt kê danh mục sản phẩm </a>
+                                </li>
                             </ul>
                         </li>
                     </ul>

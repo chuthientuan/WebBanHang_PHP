@@ -29,7 +29,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <div class="log-w3">
         <div class="w3layouts-main">
             <h2>Đăng nhập</h2>
-            <form action="{{URL::to('/admin-dashboard')}}" method="post">
+            <form action="{{ URL::to('/admin-dashboard') }}" method="post">
                 {{ csrf_field() }}
                 <input type="email" class="ggg" name="admin_email" placeholder="Email" required="">
                 <input type="password" class="ggg" name="admin_password" placeholder="Password" required="">
@@ -38,7 +38,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <div class="clearfix"></div>
                 <input type="submit" value="Đăng nhập" name="login">
             </form>
-            @if(session('message'))
+            @if (session('message'))
                 <div class="alert alert-danger">
                     {{ session('message') }}
                 </div>
