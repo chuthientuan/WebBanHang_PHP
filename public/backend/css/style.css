@@ -57,6 +57,9 @@ body a:hover{
     font-size: 28px;
     content: "\f165";
 }
+a.active.styling-edit{
+    font-size: 20px;
+}
 #sidebar ul li {
     position: relative;
 }
