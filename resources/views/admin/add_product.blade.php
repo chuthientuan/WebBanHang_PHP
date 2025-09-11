@@ -4,7 +4,7 @@
         <div class="col-lg-12">
             <section class="panel">
                 <header class="panel-heading">
-                    Thêm  Sản Phẩm
+                    Thêm Sản Phẩm
                 </header>
                 <div class="panel-body">
                     <?php
@@ -14,24 +14,24 @@
                         session()->forget('message');
                     } ?>
                     <div class="position-center">
-                        <form role="form" action="{{ URL::to('/save-product') }}" method="post" enctype="multipart/form-data">
+                        <form role="form" action="{{ URL::to('/save-product') }}" method="post"
+                            enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Tên Sản Phẩm </label>
-                                <input type="text" name="product_name" class="form-control"
-                                    id="exampleInputEmail1" placeholder="Tên Danh Mục ">
+                                <input type="text" name="product_name" class="form-control" id="exampleInputEmail1"
+                                    placeholder="Tên Danh Mục ">
                             </div>
 
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Giá Sản Phẩm </label>
-                                <input type="text" name="product_price" class="form-control"
-                                    id="exampleInputEmail1" placeholder="Tên Danh Mục ">
+                                <input type="text" name="product_price" class="form-control" id="exampleInputEmail1"
+                                    placeholder="Tên Danh Mục ">
                             </div>
 
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Hình Ảnh Sản Phẩm </label>
-                                <input type="file" name="product_image" class="form-control"
-                                    id="exampleInputEmail1">
+                                <input type="file" name="product_image" class="form-control" id="exampleInputEmail1">
                             </div>
 
                             <div class="form-group">
@@ -47,18 +47,18 @@
                             <div class="form-group">
                                 <label for="exampleInputPassword1">Danh Mục Sản Phẩm </label>
                                 <select name="product_cate" class="form-control input-sm m-bot15">
-                                    @foreach ( $cate_product as $key => $cate)
-                                        <option value="{{$cate->category_id}}">{{$cate->category_name}}</option>
+                                    @foreach ($cate_product as $key => $cate)
+                                        <option value="{{ $cate->category_id }}">{{ $cate->category_name }}</option>
                                     @endforeach
-                                    
+
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <label for="exampleInputPassword1">Thương Hiệu</label>
                                 <select name="product_brand" class="form-control input-sm m-bot15">
-                                    @foreach ( $brand_product as $key => $brand)
-                                        <option value="{{$brand->brand_id}}">{{$brand->brand_name}}</option>
+                                    @foreach ($brand_product as $key => $brand)
+                                        <option value="{{ $brand->brand_id }}">{{ $brand->brand_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
