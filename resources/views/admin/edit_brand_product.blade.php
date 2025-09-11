@@ -22,9 +22,8 @@
                                 {{ csrf_field() }}
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Tên Danh Mục</label>
-                                    <input type="text" value="{{ $edit_value->brand_name }}"
-                                        name="brand_product_name" class="form-control" id="exampleInputEmail1"
-                                        placeholder="Tên Danh Mục ">
+                                    <input type="text" value="{{ $edit_value->brand_name }}" name="brand_product_name"
+                                        class="form-control" id="exampleInputEmail1" placeholder="Tên Danh Mục ">
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputPassword1">Mô tả danh mục</label>

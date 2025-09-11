@@ -18,8 +18,8 @@
                             {{ csrf_field() }}
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Tên Thương Hiệu</label>
-                                <input type="text" name="brand_product_name" class="form-control"
-                                    id="exampleInputEmail1" placeholder="Tên Danh Mục ">
+                                <input type="text" name="brand_product_name" class="form-control" id="exampleInputEmail1"
+                                    placeholder="Tên Danh Mục ">
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputPassword1">Mô tả thương hiệu</label>
