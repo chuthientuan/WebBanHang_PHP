@@ -5,6 +5,7 @@ use App\Http\Controllers\BrandProductController;
 use App\Http\Controllers\CategoryProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProductController;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/trang-chu', [HomeController::class, 'index']);
@@ -37,3 +38,16 @@ Route::get('/active-brand-product/{brand_product_id} ', [BrandProductController:
 
 Route::post('/save-brand-product', [BrandProductController::class, 'save_brand_product']);
 Route::post('/update-brand-product/{brand_product_id}', [BrandProductController::class, 'update_brand_product']);
+
+
+//Product
+Route::get('/add-product', [ProductController::class, 'add_product']);
+Route::get('/edit-product/{product_id}', [ProductController::class, 'edit_product']);
+Route::get('/delete-product/{product_id}', [ProductController::class, 'delete_product']);
+Route::get('/all-product', [ProductController::class, 'all_product']);
+
+Route::get('/unactive-product/{product_id} ', [ProductController::class, 'unactive_product']);
+Route::get('/active-product/{product_id}', [ProductController::class, 'active_product']);
+
+Route::post('/save-product', [ProductController::class, 'save_product']);
+Route::post('/update-product/{product_id}', [ProductController::class, 'update_product']);
