@@ -13,15 +13,6 @@
                             <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Thêm vào
                                 giỏ hàng</a>
                         </div>
-                        <div class="product-overlay">
-                            <div class="overlay-content">
-                                <h2>{{ number_format($product->product_price) . ' ' . 'VNĐ' }}</h2>
-                                <p>{{ $product->product_name }}</p>
-                                <a href="#" class="btn btn-default add-to-cart"><i
-                                        class="fa fa-shopping-cart"></i>Thêm vào
-                                    giỏ hàng</a>
-                            </div>
-                        </div>
                     </div>
                     <div class="choose">
                         <ul class="nav nav-pills nav-justified">
