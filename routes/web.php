@@ -6,10 +6,16 @@ use App\Http\Controllers\CategoryProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
-
+ 
+//forntend
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/trang-chu', [HomeController::class, 'index']);
 
+//danh muc san pham trang chu
+Route::get('/danh-muc-san-pham/{category_id}', [CategoryProductController::class, 'show_category_home']);
+Route::get('/thuong-hieu-san-pham/{brand_id}', [BrandProductController::class, 'show_brand_home']);
+
+//backend
 Route::get('/admin', [AdminController::class, 'index']);
 Route::get('/dashboard', [AdminController::class, 'show_dashboard']);
 Route::post('/admin-dashboard', [AdminController::class, 'dashboard']);
