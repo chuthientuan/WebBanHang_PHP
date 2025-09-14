@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 
 //forntend
 Route::get('/', [HomeController::class, 'index']);
@@ -47,7 +48,6 @@ Route::get('/active-brand-product/{brand_product_id} ', [BrandProductController:
 Route::post('/save-brand-product', [BrandProductController::class, 'save_brand_product']);
 Route::post('/update-brand-product/{brand_product_id}', [BrandProductController::class, 'update_brand_product']);
 
-
 //Product
 Route::get('/add-product', [ProductController::class, 'add_product']);
 Route::get('/edit-product/{product_id}', [ProductController::class, 'edit_product']);
@@ -60,3 +60,11 @@ Route::get('/active-product/{product_id}', [ProductController::class, 'active_pr
 Route::post('/save-product', [ProductController::class, 'save_product']);
 Route::post('/update-product/{product_id}', [ProductController::class, 'update_product']);
 
+//Cart
+Route::post('/save-cart', [CartController::class, 'save_cart']);
+Route::post('/update-cart-quantity', [CartController::class, 'update_cart_quantity']);
+Route::get('/show-cart', [CartController::class, 'show_cart']);
+Route::get('/delete-to-cart/{rowId}', [CartController::class, 'delete_to_cart']);
+
+//Checkout
+Route::get('/login-checkout', [CheckoutController::class, 'login_checkout']);
