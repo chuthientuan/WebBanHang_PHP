@@ -12,6 +12,7 @@ use App\Http\Controllers\CheckoutController;
 //forntend
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/trang-chu', [HomeController::class, 'index']);
+Route::post('/tim-kiem', [HomeController::class, 'search']);
 
 //danh muc san pham trang chu
 Route::get('/danh-muc-san-pham/{category_id}', [CategoryProductController::class, 'show_category_home']);
@@ -67,4 +68,12 @@ Route::get('/show-cart', [CartController::class, 'show_cart']);
 Route::get('/delete-to-cart/{rowId}', [CartController::class, 'delete_to_cart']);
 
 //Checkout
+
 Route::get('/login-checkout', [CheckoutController::class, 'login_checkout']);
+Route::get('/logout-checkout', [CheckoutController::class, 'logout_checkout']);
+Route::post('/add-customer', [CheckoutController::class, 'add_customer']);
+Route::post('/order-place', [CheckoutController::class, 'order-place']);
+Route::post('/login-customer', [CheckoutController::class, 'login_customer']);
+Route::get('/checkout', [CheckoutController::class, 'checkout']);
+Route::get('/payment', [CheckoutController::class, 'payment']);
+Route::post('/save-checkout-customer', [CheckoutController::class, 'save_checkout_customer']);
