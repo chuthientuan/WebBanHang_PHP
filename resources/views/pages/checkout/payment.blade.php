@@ -1,14 +1,19 @@
 @extends('index')
 @section('content')
-    <section id="cart_items">
-        <div class="container">
-            <div class="breadcrumbs">
+	<section id="cart_items">
+		<div class="container">
+			<div class="breadcrumbs">
                 <ol class="breadcrumb">
                     <li><a href="{{URL::to('/')}}">Trang chủ</a></li>
-                    <li class="active">Giỏ hàng của bạn</li>
+                    <li class="active">Thanh Toán Giỏ hàng </li>
                 </ol>
             </div>
-            <div class="table-responsive cart_info">
+
+			</div>
+			<div class="review-payment">
+				<h2>Xem lại giỏ hàng </h2>
+			</div>
+             <div class="table-responsive cart_info">
                 <?php
                 $content = Cart::content();
                 ?>
@@ -68,36 +73,25 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-    </section> <!--/#cart_items-->
-    <section id="do_action">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="total_area">
-                        <ul>
-                            <li>Tổng<span>{{ Cart::subtotal(0, ',', '.') . '  VNĐ' }}</span></li>
-                            <li>Thuế<span>{{ Cart::tax(0, ',', '.') . '  VNĐ' }}</span></li>
-                            <li>Phí vận chuyển<span>Free</span></li>
-                            <li>Thành tiền<span>{{ Cart::total(0, ',', '.') . '  VNĐ' }}</span></li>
-                        </ul>
-                        {{-- <a class="btn btn-default update" href="">Update</a> --}}
-                        <?php
-                                    $customer_id = Session::get('customer_id');
-                                    if ($customer_id != NULL) {
-                                ?>   
-                                   <a class="btn btn-default check_out" href="{{URL::to('/checkout')}}">Check Out</a>
-                                <?php
-                                    } else {
-                                ?>
-                                    <a class="btn btn-default check_out" href="{{URL::to('/login-checkout')}}">Check Out</a>
-                                <?php
-                                    }   
-                                ?>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section><!--/#do_action-->
+			<h4 style="margin: 40px 0;font-size: 20px;">chọn  một hình thức thanh toán sau : </h4>
+            <form action="{{URL::to('/order-place')}}" method="POST">
+                {{csrf_field()}}
+			<div class="payment-options">
+					<span>
+						<label><input name="payment_option" value="bằng ATM" type="checkbox"> Thanh toán bằng ATM</label>
+					</span>
+					<span>
+						<label><input name="payment_option" value="Tiền Mặt" type="checkbox">Thanh toán tiền mặt</label>
+					</span>
+					<span>
+						<label><input name="payment_option" value="thẻ ghi nợ" type="checkbox">Thanh toán thẻ visa</label>
+					</span>
+                    <input type="submit" value="Đặt hàng" name="send_order_place" class="btn btn-primary btn-sm">
+
+			</div>
+            </form>
+		</div>
+	</section> <!--/#cart_items-->
+
+
 @endsection
