@@ -8,6 +8,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderController;
 
 //forntend
 Route::get('/', [HomeController::class, 'index']);
@@ -72,8 +73,12 @@ Route::get('/delete-to-cart/{rowId}', [CartController::class, 'delete_to_cart'])
 Route::get('/login-checkout', [CheckoutController::class, 'login_checkout']);
 Route::get('/logout-checkout', [CheckoutController::class, 'logout_checkout']);
 Route::post('/add-customer', [CheckoutController::class, 'add_customer']);
-Route::post('/order-place', [CheckoutController::class, 'order-place']);
+Route::post('/order-place', [CheckoutController::class, 'order_place']);
 Route::post('/login-customer', [CheckoutController::class, 'login_customer']);
 Route::get('/checkout', [CheckoutController::class, 'checkout']);
 Route::get('/payment', [CheckoutController::class, 'payment']);
 Route::post('/save-checkout-customer', [CheckoutController::class, 'save_checkout_customer']);
+
+//Order
+Route::get('/manage-order', [OrderController::class, 'manage_order']);
+Route::get('/view-order/{orderId}', [OrderController::class, 'view_order']);

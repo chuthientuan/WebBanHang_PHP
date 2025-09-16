@@ -13,13 +13,20 @@ return new class extends Migration
     {
         Schema::create('tbl_order', function (Blueprint $table) {
             $table->increments('order_id');
-            $table->integer('customer_id');
-            $table->integer('shipping_id');
-            $table->integer('payment_id');
-            $table->float('order_total');
-            $table->integer('order_status');
 
+            // Sửa kiểu dữ liệu và thêm khóa ngoại
+            $table->unsignedInteger('customer_id');
+            $table->unsignedInteger('shipping_id');
+            $table->unsignedInteger('payment_id');
+
+            $table->string('order_total', 50);
+            $table->string('order_status', 50);
             $table->timestamps();
+
+            // Định nghĩa liên kết
+            $table->foreign('customer_id')->references('customer_id')->on('tbl_customer')->onDelete('cascade');
+            $table->foreign('shipping_id')->references('shipping_id')->on('tbl_shipping')->onDelete('cascade');
+            $table->foreign('payment_id')->references('payment_id')->on('tbl_payment')->onDelete('cascade');
         });
     }
 

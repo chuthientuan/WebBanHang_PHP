@@ -82,10 +82,9 @@
                                 <span>Tổng quan</span>
                             </a>
                         </li>
-
                         <li class="sub-menu">
                             <a href="javascript:;">
-                                <i class="fa fa-book"></i>
+                                <i class="fa fa-sitemap"></i>
                                 <span>Danh mục sản phẩm</span>
                             </a>
                             <ul class="sub">
@@ -94,10 +93,9 @@
                                 </li>
                             </ul>
                         </li>
-
                         <li class="sub-menu">
                             <a href="javascript:;">
-                                <i class="fa fa-book"></i>
+                                <i class="fa fa-tags"></i>
                                 <span>Thương hiệu sản phẩm</span>
                             </a>
                             <ul class="sub">
@@ -106,10 +104,9 @@
                                 </li>
                             </ul>
                         </li>
-
                         <li class="sub-menu">
                             <a href="javascript:;">
-                                <i class="fa fa-book"></i>
+                                <i class="fa fa-cube"></i>
                                 <span>Thêm sản phẩm</span>
                             </a>
                             <ul class="sub">
@@ -117,6 +114,12 @@
                                 <li><a href="{{ URL::to('/all-product') }}">Liệt kê danh mục sản phẩm </a>
                                 </li>
                             </ul>
+                        </li>
+                        <li>
+                            <a class="active" href="{{ URL::to('/manage-order') }}">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span>Đơn hàng</span>
+                            </a>
                         </li>
                     </ul>
                 </div>
