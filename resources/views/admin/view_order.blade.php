@@ -6,24 +6,17 @@
                 Thông tin khách hàng
             </div>
             <div class="table-responsive">
-                <?php
-                $message = session('message');
-                if ($message) {
-                    echo '<span class="text-alert" >' . $message . '</span>';
-                    session()->forget('message');
-                } ?>
                 <table class="table table-striped b-t b-light">
                     <thead>
                         <tr>
-                            <th>Tên  khách hàng</th>
-                            <th>số điện thoại</th>
-                            <th style="width:30px;"></th>
+                            <th>Tên khách hàng</th>
+                            <th>Số điện thoại</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ $order_by_id->customer_name}}</td>
-                            <td>{{ $order_by_id->customer_phone}}</td>
+                            <td>{{ $order->customer_name }}</td>
+                            <td>{{ $order->customer_phone }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -37,26 +30,19 @@
                 Thông tin vận chuyển
             </div>
             <div class="table-responsive">
-                <?php
-                $message = session('message');
-                if ($message) {
-                    echo '<span class="text-alert" >' . $message . '</span>';
-                    session()->forget('message');
-                } ?>
                 <table class="table table-striped b-t b-light">
                     <thead>
                         <tr>
-                            <th>Tên người vận chuyển</th>
-                            <th> địa chỉ</th>
-                            <th>Số diện thoại</th>
-                            <th style="width:30px;"></th>
+                            <th>Tên người nhận</th>
+                            <th>Địa chỉ</th>
+                            <th>Số điện thoại</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ $order_by_id->shipping_name}}</td>
-                            <td>{{ $order_by_id->shipping_address}}</td>
-                            <td>{{ $order_by_id->shipping_phone}}</td>
+                            <td>{{ $order->shipping_name }}</td>
+                            <td>{{ $order->shipping_address }}</td>
+                            <td>{{ $order->shipping_phone }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -69,81 +55,29 @@
             <div class="panel-heading">
                 Liệt kê chi tiết đơn hàng
             </div>
-            <div class="row w3-res-tb">
-                <div class="col-sm-5 m-b-xs">
-                    <select class="input-sm form-control w-sm inline v-middle">
-                        <option value="0">Bulk action</option>
-                        <option value="1">Delete selected</option>
-                        <option value="2">Bulk edit</option>
-                        <option value="3">Export</option>
-                    </select>
-                    <button class="btn btn-sm btn-default">Apply</button>
-                </div>
-                <div class="col-sm-4">
-                </div>
-                <div class="col-sm-3">
-                    <div class="input-group">
-                        <input type="text" class="input-sm form-control" placeholder="Search">
-                        <span class="input-group-btn">
-                            <button class="btn btn-sm btn-default" type="button">Go!</button>
-                        </span>
-                    </div>
-                </div>
-            </div>
             <div class="table-responsive">
-                <?php
-                $message = session('message');
-                if ($message) {
-                    echo '<span class="text-alert" >' . $message . '</span>';
-                    session()->forget('message');
-                } ?>
                 <table class="table table-striped b-t b-light">
                     <thead>
                         <tr>
-                            <th style="width:20px;">
-                                <label class="i-checks m-b-none">
-                                    <input type="checkbox"><i></i>
-                                </label>
-                            </th>
-                            <th>Tên sản phẩm </th>
+                            <th>Tên sản phẩm</th>
                             <th>Số lượng</th>
                             <th>Giá</th>
-                            <th>Tổng </th>
-                            <th style="width:30px;"></th>
+                            <th>Tổng tiền</th>
                         </tr>
                     </thead>
                     <tbody>
-
-                        <tr>
-                            <td><label class="i-checks m-b-none"><input type="checkbox" name="post[]"><i></i></label>
-                            </td>
-                            <td>{{ $order_by_id->product_name}}</td>
-                            <td>{{ $order_by_id->product_sales_quantity}}</td>
-                            <td>{{ $order_by_id->product_price}}</td>
-                            <td>{{ $order_by_id->product_price*$order_by_id->product_sales_quantity}}</td>
-                           
-                        </tr>
+                        @foreach ($order_details as $detail)
+                            <tr>
+                                <td>{{ $detail->product_name }}</td>
+                                <td>{{ $detail->product_sales_quantity }}</td>
+                                <td>{{ number_format($detail->product_price, 0, ',', '.') }} đ</td>
+                                <td>{{ number_format($detail->product_price * $detail->product_sales_quantity, 0, ',', '.') }}
+                                    đ</td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
-            <footer class="panel-footer">
-                <div class="row">
-
-                    <div class="col-sm-5 text-center">
-                        <small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small>
-                    </div>
-                    <div class="col-sm-7 text-right text-center-xs">
-                        <ul class="pagination pagination-sm m-t-none m-b-none">
-                            <li><a href=""><i class="fa fa-chevron-left"></i></a></li>
-                            <li><a href="">1</a></li>
-                            <li><a href="">2</a></li>
-                            <li><a href="">3</a></li>
-                            <li><a href="">4</a></li>
-                            <li><a href=""><i class="fa fa-chevron-right"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </footer>
         </div>
     </div>
 @endsection
