@@ -3,7 +3,7 @@
     <div class="table-agile-info">
         <div class="panel panel-default">
             <div class="panel-heading">
-                Thông tin người mua
+                Thông tin khách hàng
             </div>
             <div class="table-responsive">
                 <?php
@@ -15,15 +15,15 @@
                 <table class="table table-striped b-t b-light">
                     <thead>
                         <tr>
-                            <th>Tên người mua</th>
-                            <th>Tổng địa chỉ</th>
+                            <th>Tên  khách hàng</th>
+                            <th>số điện thoại</th>
                             <th style="width:30px;"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td></td>
-                            <td></td>
+                            <td>{{ $order_by_id->customer_name}}</td>
+                            <td>{{ $order_by_id->customer_phone}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -46,15 +46,17 @@
                 <table class="table table-striped b-t b-light">
                     <thead>
                         <tr>
-                            <th>Tên người mua</th>
-                            <th>Tổng địa chỉ</th>
+                            <th>Tên người vận chuyển</th>
+                            <th> địa chỉ</th>
+                            <th>Số diện thoại</th>
                             <th style="width:30px;"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td></td>
-                            <td></td>
+                            <td>{{ $order_by_id->shipping_name}}</td>
+                            <td>{{ $order_by_id->shipping_address}}</td>
+                            <td>{{ $order_by_id->shipping_phone}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -103,10 +105,10 @@
                                     <input type="checkbox"><i></i>
                                 </label>
                             </th>
-                            <th>Tên người đặt</th>
-                            <th>Tổng giá tiền</th>
-                            <th>Tình trạng</th>
-                            <th>Hiển thị</th>
+                            <th>Tên sản phẩm </th>
+                            <th>Số lượng</th>
+                            <th>Giá</th>
+                            <th>Tổng </th>
                             <th style="width:30px;"></th>
                         </tr>
                     </thead>
@@ -115,18 +117,11 @@
                         <tr>
                             <td><label class="i-checks m-b-none"><input type="checkbox" name="post[]"><i></i></label>
                             </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>
-                                <a href="" class="active styling-edit" ui-toggle-class="">
-                                    <i class="fa fa-pencil-square-o text-success text-active"></i>
-                                </a>
-                                <a onclick="return confirm('Bạn có chắc là muốn xóa đơn hàng này không?')" href=""
-                                    class="active styling-edit" ui-toggle-class="">
-                                    <i class="fa fa-times text-danger text"></i>
-                                </a>
-                            </td>
+                            <td>{{ $order_by_id->product_name}}</td>
+                            <td>{{ $order_by_id->product_sales_quantity}}</td>
+                            <td>{{ $order_by_id->product_price}}</td>
+                            <td>{{ $order_by_id->product_price*$order_by_id->product_sales_quantity}}</td>
+                           
                         </tr>
                     </tbody>
                 </table>
