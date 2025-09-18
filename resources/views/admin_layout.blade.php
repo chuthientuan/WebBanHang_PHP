@@ -143,13 +143,18 @@
         </section>
         <!--main content end-->
     </section>
-    <script src="backend/js/bootstrap.js"></script>
-    <script src="backend/js/jquery.dcjqaccordion.2.7.js"></script>
-    <script src="backend/js/scripts.js"></script>
-    <script src="backend/js/jquery.slimscroll.js"></script>
-    <script src="backend/js/jquery.nicescroll.js"></script>
+    <script src="{{ asset('backend/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('backend/js/jquery.dcjqaccordion.2.7.js') }}"></script>
+    <script src="{{ asset('backend/js/scripts.js') }}"></script>
+    <script src="{{ asset('backend/js/jquery.slimscroll.js') }}"></script>
+    <script src="{{ asset('backend/js/jquery.nicescroll.js') }}"></script>
+    <script src="{{ asset('backend/js/jquery.nicescroll.js') }}"></script>
+    <script src="{{ asset('backend/ckeditor/ckeditor.js') }}"></script>
+    <script>
+        CKEDITOR.replace('ckeditor1');;
+    </script>
     <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/flot-chart/excanvas.min.js"></script><![endif]-->
-    <script src="backend/js/jquery.scrollTo.js"></script>
+    <script src="{{ asset('backend/js/jquery.scrollTo.js') }}"></script>
     <!-- morris JavaScript -->
     <script>
         $(document).ready(function() {
