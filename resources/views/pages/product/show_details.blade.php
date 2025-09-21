@@ -1,4 +1,7 @@
 @extends('index')
+@section('sidebar')
+    @include('pages.include.sidebar');
+@endsection
 @section('content')
     @foreach ($product_details as $key => $value)
         <div class="product-details"><!--product-details-->

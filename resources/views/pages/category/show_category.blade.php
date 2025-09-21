@@ -1,4 +1,7 @@
 @extends('index')
+@section('sidebar')
+    @include('pages.include.sidebar');
+@endsection
 @section('content')
     <div class="features_items"><!--features_items-->
 
