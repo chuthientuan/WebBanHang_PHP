@@ -68,6 +68,7 @@ Route::post('/update-cart-quantity', [CartController::class, 'update_cart_quanti
 Route::get('/show-cart', [CartController::class, 'show_cart']);
 Route::get('/delete-to-cart/{rowId}', [CartController::class, 'delete_to_cart']);
 Route::post('/add-cart-ajax', [CartController::class, 'add_cart_ajax']);
+Route::get('/gio-hang', [CartController::class, 'gio_hang']);   
 
 //Checkout
 

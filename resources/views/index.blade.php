@@ -118,7 +118,7 @@
                                 ?>
 
 
-                                <li><a href="{{ URL::to('/show-cart') }}"><i class="fa fa-shopping-cart"></i>Giỏ
+                                <li><a href="{{ URL::to('/gio-hang') }}"><i class="fa fa-shopping-cart"></i>Giỏ
                                         hàng</a></li>
 
 
@@ -466,7 +466,19 @@
                         _token: _token
                     },
                     success: function(data) {
-                        alert(data);
+                        swal(data);
+                    //    swal({
+                    //         title: "Đã thêm sản phẩm vào giỏ hàng",
+                    //         text: "Bạn có thể mua hàng tiếp hoặc tới giỏ hàng để tiến hành thanh toán ",
+                    //         showCancelButton: true,
+                    //         cancelButtonText: " Xem tiếp ",
+                    //         confirmButtonClass: " btn-success " ,
+                    //         confirmButtonText: "Đi đến giỏ hàng",
+                    //         closeOnConfirm: false
+                    //     },
+                    //         function() {
+                    //              window.location.href = "{{url('/gio-hang')}}";
+                    //         });
 
                     }
 
