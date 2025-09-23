@@ -47,7 +47,7 @@ class CartController extends Controller
         return Redirect::to('/show-cart');
     }
     public function add_cart_ajax(Request $request){
-        $data = $request->all;
+        $data = $request->all();
         print_r($data);
     }
 }
