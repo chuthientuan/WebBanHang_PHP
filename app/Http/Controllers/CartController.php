@@ -46,4 +46,8 @@ class CartController extends Controller
         Cart::update($rowId, $qty);
         return Redirect::to('/show-cart');
     }
+    public function add_cart_ajax(Request $request){
+        $data = $request->all;
+        print_r($data);
+    }
 }
