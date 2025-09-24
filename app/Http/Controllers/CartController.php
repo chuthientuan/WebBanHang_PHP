@@ -89,4 +89,49 @@ class CartController extends Controller
         $brand_product = DB::table('tbl_brand')->where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
         return view('pages.cart.cart_ajax')->with('category', $cate_product)->with('brand', $brand_product);
     }
+    public function del_product($session_id)
+    {
+        $cart = Session::get('cart');
+        if ($cart == true) {
+            foreach ($cart as $key => $val) {
+                if ($val['session_id'] == $session_id) {
+                    unset($cart[$key]);
+                }
+            }
+            Session::put('cart', $cart);
+            return Redirect()->back()->with('message', 'Xóa sản phẩm thành công');
+        } else {
+            return Redirect()->back()->with('message', 'Xóa sản phẩm thất bại');
+        }
+    }
+    public function update_cart(Request $request)
+    {
+        $data = $request->all();
+        $cart = Session::get('cart');
+        if ($cart == true) {
+            foreach ($data['cart_qty'] as $key => $qty) {
+                foreach ($cart as $session => $val) {
+                    if ($val['session_id'] == $key) {
+                        $cart[$session]['product_qty'] = $qty;
+                    }
+                }
+            }
+            Session::put('cart', $cart);
+            return Redirect()->back()->with('message', 'Cập nhật giỏ hàng thành công');
+        } else {
+            return Redirect()->back()->with('error', 'Cập nhật giỏ hàng thất bại');
+        }
+    }   
+    public function del_all_product()
+    {
+        $cart = Session::get('cart');
+        if ($cart == true) {
+            Session::forget('cart');
+            return Redirect()->back()->with('message', 'Xóa tất cả sản phẩm thành công');
+        } else {
+            return Redirect()->back()->with('message', 'Xóa tất cả sản phẩm thất bại');
+        }   
+    }
+
+    
 }
