@@ -8,6 +8,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\OrderController;
 
 //forntend
@@ -67,8 +68,18 @@ Route::post('/save-cart', [CartController::class, 'save_cart']);
 Route::post('/update-cart-quantity', [CartController::class, 'update_cart_quantity']);
 Route::get('/show-cart', [CartController::class, 'show_cart']);
 Route::get('/delete-to-cart/{rowId}', [CartController::class, 'delete_to_cart']);
+
 Route::post('/add-cart-ajax', [CartController::class, 'add_cart_ajax']);
 Route::get('/gio-hang', [CartController::class, 'gio_hang']);   
+Route::post('/update-cart', [CartController::class, 'update_cart']);
+Route::get('/del-product/{session_id}', [CartController::class, 'del_product']);
+Route::get('/del-all-product', [CartController::class, 'del_all_product']);
+
+//coupon
+Route::post('/check-coupon', [CouponController::class, 'check_coupon']); 
+Route::get('/insert-coupon', [CouponController::class, 'insert_coupon']); 
+Route::get('/list-coupon', [CouponController::class, 'list_coupon']); 
+Route::post('/insert-coupon-code', [CouponController::class, 'insert_coupon_code']); 
 
 //Checkout
 
