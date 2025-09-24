@@ -47,44 +47,45 @@ class CartController extends Controller
         Cart::update($rowId, $qty);
         return Redirect::to('/show-cart');
     }
-    public function add_cart_ajax(Request $request){
+    public function add_cart_ajax(Request $request)
+    {
         $data = $request->all();
-        $session_id = substr(md5(microtime()),rand(0,26),5);
+        $session_id = substr(md5(microtime()), rand(0, 26), 5);
         $cart = Session::get('cart');
-        if($cart==true){
+        if ($cart == true) {
             $is_avaiable = 0;
-            foreach($cart as $key => $val){
-                if($val['product_id']==$data['cart_product_id']){
+            foreach ($cart as $key => $val) {
+                if ($val['product_id'] == $data['cart_product_id']) {
                     $is_avaiable++;
                 }
             }
-            if($is_avaiable==0){
+            if ($is_avaiable == 0) {
                 $cart[] = array(
                     'session_id' => $session_id,
                     'product_id' => $data['cart_product_id'],
                     'product_name' => $data['cart_product_name'],
                     'product_image' => $data['cart_product_image'],
                     'product_price' => $data['cart_product_price'],
-                    'product_qty' => $data['cart_product_qty'], 
+                    'product_qty' => $data['cart_product_qty'],
                 );
-                Session::put('cart',$cart);
+                Session::put('cart', $cart);
             }
-        }else{
+        } else {
             $cart[] = array(
                 'session_id' => $session_id,
                 'product_id' => $data['cart_product_id'],
                 'product_name' => $data['cart_product_name'],
                 'product_image' => $data['cart_product_image'],
                 'product_price' => $data['cart_product_price'],
-                'product_qty' => $data['cart_product_qty'], 
+                'product_qty' => $data['cart_product_qty'],
             );
         }
-        session::put('cart',$cart);
-        session::save();    
-
+        session::put('cart', $cart);
+        session::save();
     }
-    public function gio_hang(Request $request){
-         $cate_product = DB::table('tbl_category_product')->where('category_status', '1')->orderBy('category_id', 'desc')->get();
+    public function gio_hang(Request $request)
+    {
+        $cate_product = DB::table('tbl_category_product')->where('category_status', '1')->orderBy('category_id', 'desc')->get();
         $brand_product = DB::table('tbl_brand')->where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
         return view('pages.cart.cart_ajax')->with('category', $cate_product)->with('brand', $brand_product);
     }

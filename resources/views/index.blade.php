@@ -444,8 +444,8 @@
     <script src="{{ asset('frontend/js/sweetalert.min.js') }}"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script type="text/javascript">
-        $(document).ready(function(){
-            $('.add-to-cart').click(function(){
+        $(document).ready(function() {
+            $('.add-to-cart').click(function() {
                 var id = $(this).data('id');
                 var cart_product_id = $('.cart_product_id_' + id).val();
                 var cart_product_name = $('.cart_product_name_' + id).val();
@@ -455,7 +455,7 @@
                 var _token = $('input[name="_token"]').val();
 
                 $.ajax({
-                    url: "{{url('/add-cart-ajax') }}",
+                    url: "{{ url('/add-cart-ajax') }}",
                     method: 'POST',
                     data: {
                         cart_product_id: cart_product_id,
@@ -466,28 +466,42 @@
                         _token: _token
                     },
                     success: function(data) {
-                        swal(data);
-                    //    swal({
-                    //         title: "Đã thêm sản phẩm vào giỏ hàng",
-                    //         text: "Bạn có thể mua hàng tiếp hoặc tới giỏ hàng để tiến hành thanh toán ",
-                    //         showCancelButton: true,
-                    //         cancelButtonText: " Xem tiếp ",
-                    //         confirmButtonClass: " btn-success " ,
-                    //         confirmButtonText: "Đi đến giỏ hàng",
-                    //         closeOnConfirm: false
-                    //     },
-                    //         function() {
-                    //              window.location.href = "{{url('/gio-hang')}}";
-                    //         });
-
+                        swal({
+                                title: "Thành công!",
+                                text: "Sản phẩm đã được thêm vào giỏ hàng của bạn.",
+                                icon: "success", // Thay 'type' bằng 'icon'
+                                buttons: {
+                                    cancel: {
+                                        text: "Xem tiếp",
+                                        value: null,
+                                        visible: true,
+                                        className: "",
+                                        closeModal: true,
+                                    },
+                                    confirm: {
+                                        text: "Đi đến giỏ hàng",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn-success", // Thêm class CSS cho nút
+                                        closeModal: true
+                                    }
+                                }
+                            })
+                            .then((value) => {
+                                // 'value' sẽ là true nếu người dùng bấm nút 'confirm' (Đi đến giỏ hàng)
+                                if (value) {
+                                    window.location.href = "{{ url('/gio-hang') }}";
+                                }
+                            });
                     }
 
                 });
             });
         });
-    </script>                            
+    </script>
 
 
 
-    </body>
-    </html>
+</body>
+
+</html>
