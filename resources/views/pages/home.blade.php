@@ -2,6 +2,9 @@
 @section('sidebar')
     @include('pages.include.sidebar')
 @endsection
+@section('slider')
+    @include('pages.include.slider')
+@endsection
 @section('content')
     <div class="features_items"><!--features_items-->
         <h2 class="title text-center">Sản phẩm mới nhất</h2>

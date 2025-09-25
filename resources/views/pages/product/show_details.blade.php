@@ -1,6 +1,6 @@
 @extends('index')
 @section('sidebar')
-    @include('pages.include.sidebar');
+    @include('pages.include.sidebar')
 @endsection
 @section('content')
     @foreach ($product_details as $key => $value)
@@ -46,7 +46,7 @@
                             <span>{{ number_format($value->product_price) . '  VNĐ' }}</span>
                             <label>Số lượng:</label>
                             <input name="qty" type="number" min = "1" value="1" />
-                            <input name="productid_hidden" type="hidden" value="{{$value->product_id}}" />
+                            <input name="productid_hidden" type="hidden" value="{{ $value->product_id }}" />
                             <button type="submit" class="btn btn-fefault cart">
                                 <i class="fa fa-shopping-cart"></i>
                                 Thêm vào giỏ hàng

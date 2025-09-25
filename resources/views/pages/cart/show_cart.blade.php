@@ -4,7 +4,7 @@
         <div class="container">
             <div class="breadcrumbs">
                 <ol class="breadcrumb">
-                    <li><a href="{{URL::to('/')}}">Trang chủ</a></li>
+                    <li><a href="{{ URL::to('/') }}">Trang chủ</a></li>
                     <li class="active">Giỏ hàng của bạn</li>
                 </ol>
             </div>
@@ -85,16 +85,16 @@
                         <?php
                                     $customer_id = Session::get('customer_id');
                                     if ($customer_id != NULL) {
-                                ?>   
-                                   <a class="btn btn-default check_out" href="{{URL::to('/checkout')}}">Check Out</a>
-                                <?php
+                                ?>
+                        <a class="btn btn-default check_out" href="{{ URL::to('/checkout') }}">Check Out</a>
+                        <?php
                                     } else {
                                 ?>
-                                    <a class="btn btn-default check_out" href="{{URL::to('/login-checkout')}}">Check Out</a>
-                                <?php
+                        <a class="btn btn-default check_out" href="{{ URL::to('/login-checkout') }}">Check Out</a>
+                        <?php
                                     }   
                                 ?>
-                        
+
                     </div>
                 </div>
             </div>

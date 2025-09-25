@@ -2,6 +2,9 @@
 @section('sidebar')
     @include('pages.include.sidebar')
 @endsection
+@section('slider')
+    @include('pages.include.slider')
+@endsection
 @section('content')
     <div class="features_items"><!--features_items-->
         @foreach ($brand_name as $key => $name)
