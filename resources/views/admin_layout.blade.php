@@ -95,43 +95,43 @@
                         </li>
                         <li class="sub-menu">
                             <a href="javascript:;">
-                                <i class="fa fa-sitemap"></i>
+                                <i class="fa fa-gift"></i>
                                 <span>Mã Giảm Giá</span>
                             </a>
                             <ul class="sub">
-                                <li><a href="{{ URL::to('/insert-coupon') }}">Thêm mã giảm giá  </a></li>
-                                <li><a href="{{ URL::to('/list-coupon') }}">Liệt kê  mã giảm giá  </a></li>
-                                </li>
-                            </ul>
+                                <li><a href="{{ URL::to('/insert-coupon') }}">Thêm mã giảm giá </a></li>
+                                <li><a href="{{ URL::to('/list-coupon') }}">Liệt kê mã giảm giá </a></li>
                         </li>
-                        <li class="sub-menu">
-                            <a href="javascript:;">
-                                <i class="fa fa-tags"></i>
-                                <span>Thương hiệu sản phẩm</span>
-                            </a>
-                            <ul class="sub">
-                                <li><a href="{{ URL::to('/add-brand-product') }}">Thương hiệu sản phẩm </a></li>
-                                <li><a href="{{ URL::to('/all-brand-product') }}">Liệt kê danh mục sản phẩm </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="sub-menu">
-                            <a href="javascript:;">
-                                <i class="fa fa-cube"></i>
-                                <span>Thêm sản phẩm</span>
-                            </a>
-                            <ul class="sub">
-                                <li><a href="{{ URL::to('/add-product') }}">Thêm sản phẩm </a></li>
-                                <li><a href="{{ URL::to('/all-product') }}">Liệt kê danh mục sản phẩm </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a class="active" href="{{ URL::to('/manage-order') }}">
-                                <i class="fa fa-shopping-cart"></i>
-                                <span>Đơn hàng</span>
-                            </a>
-                        </li>
+                    </ul>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-tags"></i>
+                            <span>Thương hiệu sản phẩm</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a href="{{ URL::to('/add-brand-product') }}">Thương hiệu sản phẩm </a></li>
+                            <li><a href="{{ URL::to('/all-brand-product') }}">Liệt kê danh mục sản phẩm </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-cube"></i>
+                            <span>Thêm sản phẩm</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a href="{{ URL::to('/add-product') }}">Thêm sản phẩm </a></li>
+                            <li><a href="{{ URL::to('/all-product') }}">Liệt kê danh mục sản phẩm </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="active" href="{{ URL::to('/manage-order') }}">
+                            <i class="fa fa-shopping-cart"></i>
+                            <span>Đơn hàng</span>
+                        </a>
+                    </li>
                     </ul>
                 </div>
                 <!-- sidebar menu end-->

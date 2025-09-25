@@ -121,17 +121,16 @@ class CartController extends Controller
         } else {
             return Redirect()->back()->with('error', 'Cập nhật giỏ hàng thất bại');
         }
-    }   
+    }
     public function del_all_product()
     {
         $cart = Session::get('cart');
         if ($cart == true) {
             Session::forget('cart');
+            Session::forget('coupon');
             return Redirect()->back()->with('message', 'Xóa tất cả sản phẩm thành công');
         } else {
             return Redirect()->back()->with('message', 'Xóa tất cả sản phẩm thất bại');
-        }   
+        }
     }
-
-    
 }

@@ -31,7 +31,7 @@ class OrderController extends Controller
         return view('admin_layout')->with('admin.manage_order', $manager_order);
     }
 
-    public function view_order($order_id) 
+    public function view_order($order_id)
     {
         $this->AuthLogin();
         $order = DB::table('tbl_order')
@@ -41,7 +41,7 @@ class OrderController extends Controller
             ->where('tbl_order.order_id', $order_id)
             ->first();
 
-      
+
         $order_details = DB::table('tbl_order_details')
             ->where('tbl_order_details.order_id', $order_id)
             ->get();
