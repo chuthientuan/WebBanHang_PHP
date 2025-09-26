@@ -13,4 +13,8 @@ class Payment extends Model
         'payment_status'
     ];
     public $timestamps = false;
+    public function order()
+    {
+        return $this->hasMany(Order::class, 'payment_id');
+    }
 }

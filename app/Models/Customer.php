@@ -15,4 +15,12 @@ class Customer extends Model
         'customer_phone'
     ];
     public $timestamps = false;
+    public function shipping()
+    {
+        return $this->hasMany(Shipping::class, 'customer_id');
+    }
+    public function order()
+    {
+        return $this->hasMany(Order::class, 'customer_id');
+    }
 }
