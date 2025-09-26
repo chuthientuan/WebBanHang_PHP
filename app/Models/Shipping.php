@@ -23,6 +23,6 @@ class Shipping extends Model
     }
     public function order()
     {
-        return $this->hasMany(Order::class, 'shipping_id    ');
+        return $this->hasMany(Order::class, 'shipping_id');
     }
 }
