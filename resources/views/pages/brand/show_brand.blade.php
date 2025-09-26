@@ -7,9 +7,7 @@
 @endsection
 @section('content')
     <div class="features_items"><!--features_items-->
-        @foreach ($brand_name as $key => $name)
-            <h2 class="title text-center">{{ $name->brand_name }}</h2>
-        @endforeach
+        <h2 class="title text-center">{{ $current_brand->brand_name }}</h2>
 
         @foreach ($brand_by_id as $key => $product)
             <a href="{{ URL::to('/chi-tiet-san-pham/' . $product->product_id) }}">

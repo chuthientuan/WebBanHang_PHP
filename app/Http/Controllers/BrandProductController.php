@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
@@ -109,15 +111,15 @@ class BrandProductController extends Controller
     //end function admin page
     public function show_brand_home($brand_id)
     {
-        $cate_product = DB::table('tbl_category_product')->where('category_status', '1')->orderBy('category_id', 'desc')->get();
+        $cate_product = Category::where('category_status', '1')->orderBy('category_id', 'desc')->get();
         $brand_product = Brand::where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
 
-        $brand_by_id = DB::table('tbl_product')
-            ->join('tbl_brand', 'tbl_product.brand_id', '=', 'tbl_brand.brand_id')
-            ->where('tbl_product.brand_id', $brand_id)->get();
-        $brand_name = Brand::where('tbl_brand.brand_id', $brand_id)->limit(1)->get();
+        $brand_by_id = Product::where('brand_id', $brand_id)
+            ->where('product_status', '1')
+            ->get();
+        $current_brand = Brand::find($brand_id);
 
         return view('pages.brand.show_brand')->with('category', $cate_product)->with('brand', $brand_product)
-            ->with('brand_by_id', $brand_by_id)->with('brand_name', $brand_name);;
+            ->with('brand_by_id', $brand_by_id)->with('current_brand', $current_brand);
     }
 }
