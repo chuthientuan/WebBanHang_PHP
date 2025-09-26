@@ -27,4 +27,17 @@ class Product extends Model
     {
         return $this->belongsTo(Brand::class, 'brand_id');
     }
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetails::class, 'product_id');
+    }
+    public function orders()
+    {
+        return $this->belongsToMany(
+            Order::class,
+            'tbl_order_details',
+            'product_id',
+            'order_id'
+        )->withPivot('product_sales_quantity', 'product_price');
+    }
 }
