@@ -102,3 +102,4 @@ Route::get('/view-order/{orderId}', [OrderController::class, 'view_order']);
 //Delivery
 Route::get('/delivery', [DeliveryController::class, 'delivery']);
 Route::post('/select-delivery', [DeliveryController::class, 'select_delivery']);
+Route::post('/insert-delivery', [DeliveryController::class, 'insert_delivery']);
