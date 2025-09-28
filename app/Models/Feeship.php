@@ -7,13 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Feeship extends Model
 {
     protected $table = 'tbl_feeship';
-    protected $primaryKey = 'matp'; 
+    protected $primaryKey = 'fee_id'; 
     protected $fillable = [
         'fee_matp',
         'fee_maqh',
         'fee_xaid',
-        'fee_feeship',
-        'type'
+        'fee_feeship'
     ];
     public $timestamps = false;
 }

@@ -76,75 +76,75 @@
                 <!-- sidebar menu start-->
                 <div class="leftside-navigation">
                     <ul class="sidebar-menu" id="nav-accordion">
-                            <li>
-                                <a class="active" href="{{ URL::to('/dashboard') }}">
-                                    <i class="fa fa-dashboard"></i>
-                                    <span>Tổng quan</span>
-                                </a>
-                            </li>
-                            <li class="sub-menu">
-                                <a href="javascript:;">
-                                    <i class="fa fa-sitemap"></i>
-                                    <span>Danh mục sản phẩm</span>
-                                </a>
-                                <ul class="sub">
-                                    <li><a href="{{ URL::to('/add-category-product') }}">Thêm danh mục sản phẩm </a></li>
-                                    <li><a href="{{ URL::to('/all-category-product') }}">Liệt kê danh mục sản phẩm </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="sub-menu">
-                                <a href="javascript:;">
-                                    <i class="fa fa-gift"></i>
-                                    <span>Mã Giảm Giá</span>
-                                </a>
-                                <ul class="sub">
-                                    <li><a href="{{ URL::to('/insert-coupon') }}">Thêm mã giảm giá </a></li>
-                                    <li><a href="{{ URL::to('/list-coupon') }}">Liệt kê mã giảm giá </a></li>
-                                </ul>
-                            </li>
+                        <li>
+                            <a class="active" href="{{ URL::to('/dashboard') }}">
+                                <i class="fa fa-dashboard"></i>
+                                <span>Tổng quan</span>
+                            </a>
+                        </li>
+                        <li class="sub-menu">
+                            <a href="javascript:;">
+                                <i class="fa fa-sitemap"></i>
+                                <span>Danh mục sản phẩm</span>
+                            </a>
+                            <ul class="sub">
+                                <li><a href="{{ URL::to('/add-category-product') }}">Thêm danh mục sản phẩm </a></li>
+                                <li><a href="{{ URL::to('/all-category-product') }}">Liệt kê danh mục sản phẩm </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="sub-menu">
+                            <a href="javascript:;">
+                                <i class="fa fa-gift"></i>
+                                <span>Mã Giảm Giá</span>
+                            </a>
+                            <ul class="sub">
+                                <li><a href="{{ URL::to('/insert-coupon') }}">Thêm mã giảm giá </a></li>
+                                <li><a href="{{ URL::to('/list-coupon') }}">Liệt kê mã giảm giá </a></li>
+                            </ul>
+                        </li>
 
-                            <li class="sub-menu">
-                                <a href="javascript:;">
-                                    <i class="fa fa-gift"></i>
-                                    <span>vận chuyển </span>
-                                </a>
-                                <ul class="sub">
-                                    <li><a href="{{ URL::to('/delivery') }}">quản lý vận chuyển </a></li>
-                                    <li><a href="{{ URL::to('/delivery') }}">Liệt kê vận chuyển </a></li>
-                                </ul>
-                            </li>
-                            
+                        <li class="sub-menu">
+                            <a href="javascript:;">
+                                <i class="fa fa-gift"></i>
+                                <span>vận chuyển </span>
+                            </a>
+                            <ul class="sub">
+                                <li><a href="{{ URL::to('/delivery') }}">quản lý vận chuyển </a></li>
+                                <li><a href="{{ URL::to('/delivery') }}">Liệt kê vận chuyển </a></li>
+                            </ul>
+                        </li>
 
-                        
-                            <li class="sub-menu">
-                                <a href="javascript:;">
-                                    <i class="fa fa-tags"></i>
-                                    <span>Thương hiệu sản phẩm</span>
-                                </a>
-                                <ul class="sub">
-                                    <li><a href="{{ URL::to('/add-brand-product') }}">Thương hiệu sản phẩm </a></li>
-                                    <li><a href="{{ URL::to('/all-brand-product') }}">Liệt kê danh mục sản phẩm </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="sub-menu">
-                                <a href="javascript:;">
-                                    <i class="fa fa-cube"></i>
-                                    <span>Thêm sản phẩm</span>
-                                </a>
-                                <ul class="sub">
-                                    <li><a href="{{ URL::to('/add-product') }}">Thêm sản phẩm </a></li>
-                                    <li><a href="{{ URL::to('/all-product') }}">Liệt kê danh mục sản phẩm </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a class="active" href="{{ URL::to('/manage-order') }}">
-                                    <i class="fa fa-shopping-cart"></i>
-                                    <span>Đơn hàng</span>
-                                </a>
-                            </li>
+
+
+                        <li class="sub-menu">
+                            <a href="javascript:;">
+                                <i class="fa fa-tags"></i>
+                                <span>Thương hiệu sản phẩm</span>
+                            </a>
+                            <ul class="sub">
+                                <li><a href="{{ URL::to('/add-brand-product') }}">Thương hiệu sản phẩm </a></li>
+                                <li><a href="{{ URL::to('/all-brand-product') }}">Liệt kê danh mục sản phẩm </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="sub-menu">
+                            <a href="javascript:;">
+                                <i class="fa fa-cube"></i>
+                                <span>Thêm sản phẩm</span>
+                            </a>
+                            <ul class="sub">
+                                <li><a href="{{ URL::to('/add-product') }}">Thêm sản phẩm </a></li>
+                                <li><a href="{{ URL::to('/all-product') }}">Liệt kê danh mục sản phẩm </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="active" href="{{ URL::to('/manage-order') }}">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span>Đơn hàng</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <!-- sidebar menu end-->
@@ -175,27 +175,53 @@
     <script src="{{ asset('backend/js/jquery.nicescroll.js') }}"></script>
     <script src="{{ asset('backend/ckeditor/ckeditor.js') }}"></script>
     <script type="text/javascript">
-         $(document).ready(function(){
-            $('.choose').on('change',function(){
+        $(document).ready(function() {
+            $('.add_delivery').click(function() {
+                var city = $('.city').val();
+                var province = $('.province').val();
+                var wards = $('.wards').val();
+                var fee_ship = $('.fee_ship').val();
+                var _token = $('input[name="_token"]').val();
+
+                $.ajax({
+                    url: "{{ url('/insert-delivery') }}",
+                    method: 'POST',
+                    data: {
+                        city: city,
+                        province: province,
+                        wards: wards,
+                        fee_ship: fee_ship,
+                        _token: _token
+                    },
+                    success: function(data) {
+                        alert('Thêm phí vận chuyển thành công');
+                    }
+                });
+            });
+            $('.choose').on('change', function() {
                 var action = $(this).attr('id');
                 var ma_id = $(this).val();
                 var _token = $('input[name="_token"]').val();
                 var result = '';
-                if(action=='city'){
+                if (action == 'city') {
                     result = 'province';
-                }else{
+                } else {
                     result = 'wards';
                 }
                 $.ajax({
                     url: "{{ url('/select-delivery') }}",
                     method: 'POST',
-                    data:{action:action,ma_id:ma_id,_token:_token},
-                    success:function(data){
-                        $('#'+result).html(data);
+                    data: {
+                        action: action,
+                        ma_id: ma_id,
+                        _token: _token
+                    },
+                    success: function(data) {
+                        $('#' + result).html(data);
                     }
                 });
             });
-         });
+        });
     </script>
     <script>
         CKEDITOR.replace('ckeditor1');;
