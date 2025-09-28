@@ -10,6 +10,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\DeliveryController;
 
 //forntend
 Route::get('/', [HomeController::class, 'index']);
@@ -97,3 +98,7 @@ Route::post('/save-checkout-customer', [CheckoutController::class, 'save_checkou
 //Order
 Route::get('/manage-order', [OrderController::class, 'manage_order']);
 Route::get('/view-order/{orderId}', [OrderController::class, 'view_order']);
+
+//Delivery
+Route::get('/delivery', [DeliveryController::class, 'delivery']);
+Route::post('/select-delivery', [DeliveryController::class, 'select_delivery']);
