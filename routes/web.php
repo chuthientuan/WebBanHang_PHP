@@ -94,6 +94,8 @@ Route::post('/login-customer', [CheckoutController::class, 'login_customer']);
 Route::get('/checkout', [CheckoutController::class, 'checkout']);
 Route::get('/payment', [CheckoutController::class, 'payment']);
 Route::post('/save-checkout-customer', [CheckoutController::class, 'save_checkout_customer']);
+Route::post('/select-delivery-home', [CheckoutController::class, 'select_delivery_home']);
+Route::post('/calculate-fee', [CheckoutController::class, 'calculate_fee']);
 
 //Order
 Route::get('/manage-order', [OrderController::class, 'manage_order']);
@@ -103,3 +105,7 @@ Route::get('/view-order/{orderId}', [OrderController::class, 'view_order']);
 Route::get('/delivery', [DeliveryController::class, 'delivery']);
 Route::post('/select-delivery', [DeliveryController::class, 'select_delivery']);
 Route::post('/insert-delivery', [DeliveryController::class, 'insert_delivery']);
+Route::post('/select-feeship', [DeliveryController::class, 'select_feeship']);
+Route::post('/update-delivery', [DeliveryController::class, 'update_delivery']);
+
+

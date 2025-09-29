@@ -51,6 +51,10 @@
                                 chuyển</button>
                         </form>
                     </div>
+
+                    <div id="load_delivery">
+                        
+                    </div>
                 </div>
             </section>
         </div>
