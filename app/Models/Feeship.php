@@ -15,4 +15,16 @@ class Feeship extends Model
         'fee_feeship'
     ];
     public $timestamps = false;
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'fee_matp', 'matp');
+    }
+    public function province()
+    {
+        return $this->belongsTo(Province::class, 'fee_maqh', 'maqh');
+    }
+    public function ward()
+    {
+        return $this->belongsTo(Ward::class, 'fee_xaid', 'xaid');
+    }
 }

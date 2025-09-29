@@ -176,6 +176,38 @@
     <script src="{{ asset('backend/ckeditor/ckeditor.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
+            fetch_delivery();
+            function fetch_delivery() {
+                var _token = $('input[name="_token"]').val(); 
+                $.ajax({
+                    url: "{{ url('/select-feeship') }}",
+                    method: 'POST',
+                    data: {
+                        _token: _token
+                    },
+                    success: function(data) {
+                          $('#load_delivery').html(data);
+                    }
+                });
+            }
+            $(document).on('blur', '.fee_feeship_edit', function() {
+                var feeship_id = $(this).data('feeship_id');
+                var fee_value = $(this).text();
+                var _token = $('input[name="_token"]').val();
+                $.ajax({
+                    url: "{{ url('/update-delivery') }}",
+                    method: 'POST',
+                    data: {
+                        feeship_id: feeship_id,
+                        fee_value: fee_value,
+                        _token: _token
+                    },
+                    success: function(data) {
+                        fetch_delivery();
+                    }
+                });
+            });
+
             $('.add_delivery').click(function() {
                 var city = $('.city').val();
                 var province = $('.province').val();
@@ -194,7 +226,7 @@
                         _token: _token
                     },
                     success: function(data) {
-                        alert('Thêm phí vận chuyển thành công');
+                       fetch_delivery();
                     }
                 });
             });
