@@ -140,7 +140,9 @@
                                     placeholder="Nhập mã giảm giá"><br>
                                 <input type="submit" class="btn btn-default check_coupon" name="check_coupon"
                                     value="Tính mã giảm giá">
+                                
                             </form>
+                            <a class="btn btn-default check_out" href="{{ URL::to('/checkout') }}">Thanh Toán</a>
                         </td>
                     </tr>
                 @endif
@@ -159,7 +161,7 @@
                             <li>Phí vận chuyển<span>Free</span></li>
                             <li>Tiền sau giảm <span></span></li>
                         </ul>
-                        <!-- <a class="btn btn-default check_out" href="">Thanh Toán</a> -->
+                        
                         <form action="{{ url('/check-coupon') }}" method="POST">
                             @csrf
                             <input type="text" class="form-control" name="coupon" placeholder="Nhập mã giảm giá"><br>
@@ -171,4 +173,5 @@
             </div>
         </div>
     </section><!--/#do_action--> --}}
+    
 @endsection

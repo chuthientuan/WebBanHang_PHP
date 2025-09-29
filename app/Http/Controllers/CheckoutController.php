@@ -201,11 +201,15 @@ class CheckoutController extends Controller
     {
         $data = $request->all();
         if ($data['matp']) {
-            $feeship = Feeship::where('fee_matp', $data['matp'])->where('fee_maqh', $data['maqh'])->where('fee_xaid', $data['xaid'])->first();
+            $feeship = Feeship::where('fee_matp', $data['matp'])->where('fee_maqh', $data['maqh'])->where('fee_xaid', $data['xaid'])->get();
             foreach($feeship as $key => $fee){
                 Session::put('fee', $fee->fee_feeship);
                 Session::save();
             }
         }
+    }
+    public function del_fee(){
+        Session::forget('fee');
+        return redirect()->back();
     }
 }
