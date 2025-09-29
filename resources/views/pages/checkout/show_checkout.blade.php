@@ -57,21 +57,11 @@
                                     calculate_delivery">    
 
                                 </form>
-                                <?php
-                                    echo Session::get('fee');
-                                ?>  
+                               
                             </div>
 
                             <div>
-                                @if (session()->has('message'))
-                                    <div class="alert alert-success">
-                                        {{ session()->get('message') }}
-                                    </div>
-                                @elseif(session()->has('error'))
-                                    <div class="alert alert-danger">
-                                        {{ session()->get('error') }}
-                                    </div>
-                                @endif
+                                
 
                                 <div class="table-responsive cart_info">
                                     <form action="{{ url('/update-cart') }}" method="POST">
@@ -90,13 +80,13 @@
                                             <tbody>
                                                 @if (Session::get('cart') == true)
                                                     @php
-                                                        $tongtien = 0;
+                                                        $total = 0;
                                                     @endphp
 
                                                     @foreach (Session::get('cart') as $key => $cart)
                                                         @php
                                                             $thanhtien = $cart['product_price'] * $cart['product_qty'];
-                                                            $tongtien += $thanhtien;
+                                                            $total += $thanhtien;
                                                         @endphp
                                                         <tr>
                                                             <td class="cart_product">
@@ -139,7 +129,7 @@
                                                             @endif
                                                         </td>
                                                         <td colspan="2">
-                                                            <li>Tổng tiền :<span>{{ number_format($tongtien, 0, ',', '.') }}đ</span></li>
+                                                            <li>Tổng tiền :<span>{{ number_format($total, 0, ',', '.') }}đ</span></li>
                                                             @if (Session::has('coupon'))
                                                                 <li>
                                                                     @foreach (Session::get('coupon') as $key => $cou)
@@ -147,31 +137,61 @@
                                                                         @if ($cou['coupon_condition'] == 1)
                                                                             Mã giảm: {{ $cou['coupon_number'] }} %
                                                                             @php
-                                                                                $total_coupon = ($tongtien * $cou['coupon_number']) / 100;
+                                                                                $total_coupon = ($total * $cou['coupon_number']) / 100;
                                                                             @endphp
-                                                                            <p>Tổng giảm: {{ number_format($total_coupon, 0, ',', '.') }}đ</p>
-                                                                            <p><b>Thành tiền:
-                                                                                    {{ number_format($tongtien - $total_coupon, 0, ',', '.') }}đ</b>
+                                                                            <p>
+                                                                                @php
+                                                                                    $total_after_coupon =$total-$total_coupon 
+                                                                                @endphp
                                                                             </p>
+                                        
 
                                                                             {{-- Điều kiện 2: Giảm giá theo số tiền cố định --}}
                                                                         @elseif($cou['coupon_condition'] == 2)
                                                                             Mã giảm: {{ number_format($cou['coupon_number'], 0, ',', '.') }}đ
                                                                             @php
-                                                                                $total_coupon = $tongtien - $cou['coupon_number'];
+                                                                                $total_coupon = $total - $cou['coupon_number'];
                                                                             @endphp
-                                                                            <p><b>Thành tiền:
-                                                                                    {{ number_format($total_coupon, 0, ',', '.') }}đ</b></p>
+                                                                            <p>
+                                                                                @php
+                                                                                    $total_after_coupon =$total-$total_coupon 
+                                                                                @endphp
+                                                                            </p>
+                                                                            
                                                                         @endif
                                                                     @endforeach
                                                                 </li>
                                                             @endif
-                                                            {{-- <li>Thuế <span></span></li>
-                                                            <li>Phí vận chuyển<span>Free</span></li> --}}
+                                                            @if (Session::get('fee') > 0)
+                                                                <li> <a class="cart_quantity_delete"href="{{ url('/del-fee/') }}"><i
+                                                                        class="fa fa-times"></i></a>
+                                                                    Phí vận chuyển : <span>{{ number_format(Session::get('fee'), 0, ',', '.') }}đ</span>
+                                                                    <?php
+                                                                        $total_after_fee = $total- Session::get('fee');
+                                                                    ?>
+                                                                </li>
+                                                            @endif
+                                                            <li>Tổng còn : 
+                                                            @php
+                                                                if(Session::get('fee')&& !Session::get('coupon')){
+                                                                        $total_after =  $total_after_fee;
+                                                                        echo number_format($total_after, 0, ',', '.').'đ';
+                                                                }elseif(!Session::get('fee')&& Session::get('coupon')){
+                                                                    $total_after =  $total_after_coupon;
+                                                                    echo number_format($total_after, 0, ',', '.').'đ';
+                                                                }elseif(Session::get('fee')&& Session::get('coupon')){
+                                                                    $total_after =  $total_after_coupon;
+                                                                    $total_after = $total_after - Session::get('fee');
+                                                                      echo number_format($total_after, 0, ',', '.').'đ';
+                                                                }elseif(!Session::get('fee')&& !Session::get('coupon')){
+                                                                    $total_after = $total;
+                                                                    echo number_format($total_after, 0, ',', '.').'đ';
+                                                                }
+                                                            @endphp </li>
                                                         </td>
                                                     </tr>
                                                 @else
-                                                    <tr>>
+                                                    <tr>
                                                         <td colspan="5">
                                                             <center>
                                                                 @php
@@ -181,7 +201,7 @@
                                                         </td>
                                                     </tr>
                                                     @php
-                                                        $tongtien = 0;
+                                                        $total = 0;
                                                     @endphp
                                                 @endif
                                             </tbody>
