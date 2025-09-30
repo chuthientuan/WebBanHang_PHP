@@ -83,6 +83,13 @@
                                                 mã khuyến mãi</a>
                                         @endif
                                     </td>
+                                    <td>
+                                        @if (Session::get('customer_id'))
+                                            <a class="btn btn-default check_out" href="{{ url('/checkout') }}">Đặt hàng</a>
+                                        @else
+                                            <a class="btn btn-default check_out" href="{{ url('/login-checkout') }}">Đặt hàng</a>
+                                        @endif
+                                    </td>
                                     <td colspan="2">
                                         <li>Tổng tiền :<span>{{ number_format($tongtien, 0, ',', '.') }}đ</span></li>
                                         @if (Session::has('coupon'))
@@ -140,7 +147,6 @@
                                     placeholder="Nhập mã giảm giá"><br>
                                 <input type="submit" class="btn btn-default check_coupon" name="check_coupon"
                                     value="Tính mã giảm giá">
-                                
                             </form>
                             <a class="btn btn-default check_out" href="{{ URL::to('/checkout') }}">Thanh Toán</a>
                         </td>
@@ -173,5 +179,5 @@
             </div>
         </div>
     </section><!--/#do_action--> --}}
-    
+
 @endsection

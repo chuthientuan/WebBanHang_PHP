@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\Customer;
 use App\Models\Feeship;
+use App\Models\Order;
+use App\Models\OrderDetails;
+use App\Models\Payment;
 use App\Models\Shipping;
 use App\Models\Province;
 use App\Models\Ward;
@@ -33,6 +36,13 @@ class CheckoutController extends Controller
         $cate_product = Category::where('category_status', '1')->orderBy('category_id', 'desc')->get();
         $brand_product = Brand::where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
         return view('pages.checkout.login_checkout')->with('category', $cate_product)->with('brand', $brand_product);
+    }
+
+    public function login_home()
+    {
+        $cate_product = Category::where('category_status', '1')->orderBy('category_id', 'desc')->get();
+        $brand_product = Brand::where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
+        return view('pages.login.login')->with('category', $cate_product)->with('brand', $brand_product);
     }
 
     public function add_customer(Request $request)
@@ -70,7 +80,7 @@ class CheckoutController extends Controller
         $brand_product = Brand::where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
         $city = City::orderby('matp', 'ASC')->get();
         return view('pages.checkout.show_checkout')->with('category', $cate_product)->with('brand', $brand_product)
-        ->with('city', $city);
+            ->with('city', $city);
     }
 
     public function save_checkout_customer(Request $request)
@@ -148,6 +158,24 @@ class CheckoutController extends Controller
         return Redirect::to('/login-checkout');
     }
 
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email_account' => 'required|email',
+            'password_account' => 'required'
+        ]);
+        $email = $request->email_account;
+        $password = md5($request->password_account);
+
+        $result = DB::table('tbl_customer')->where('customer_email', $email)->where('customer_password', $password)->first();
+        if ($result) {
+            Session::put('customer_id', $result->customer_id);
+            return Redirect::to('/trang-chu');
+        } else {
+            return Redirect::to('/login-checkout')->with('error', 'Tài khoản hoặc mật khẩu không chính xác.');
+        }
+    }
+
     public function login_customer(Request $request)
     {
         $request->validate([
@@ -176,6 +204,7 @@ class CheckoutController extends Controller
         $manager_order = view('admin.manage_order')->with('all_order', $all_order);
         return view('admin_layout')->with('admin.manage_order', $manager_order);
     }
+
     public function select_delivery_home(Request $request)
     {
         $data = $request->all();
@@ -197,19 +226,80 @@ class CheckoutController extends Controller
             return response($output);
         }
     }
+
     public function calculate_fee(Request $request)
     {
         $data = $request->all();
         if ($data['matp']) {
             $feeship = Feeship::where('fee_matp', $data['matp'])->where('fee_maqh', $data['maqh'])->where('fee_xaid', $data['xaid'])->get();
-            foreach($feeship as $key => $fee){
-                Session::put('fee', $fee->fee_feeship);
-                Session::save();
+            if ($feeship) {
+                $count_feeship = $feeship->count();
+                if ($count_feeship > 0) {
+                    foreach ($feeship as $key => $fee) {
+                        Session::put('fee', $fee->fee_feeship);
+                        Session::save();
+                    }
+                } else {
+                    Session::put('fee', 10000);
+                    Session::save();
+                }
             }
         }
     }
-    public function del_fee(){
+
+    public function del_fee()
+    {
         Session::forget('fee');
         return redirect()->back();
+    }
+
+    public function confirm_order(Request $request)
+    {
+        $data = $request->all();
+
+        $shipping = new Shipping();
+        $shipping->shipping_name = $data['shipping_name'];
+        $shipping->shipping_email = $data['shipping_email'];
+        $shipping->shipping_phone = $data['shipping_phone'];
+        $shipping->shipping_address = $data['shipping_address'];
+        $shipping->shipping_note = $data['shipping_note'];
+        $shipping->shipping_method = $data['shipping_method'];
+        $shipping->save();
+
+        $shipping_id = $shipping->shipping_id;
+
+        $payment = new Payment();
+        $payment->payment_method = $data['shipping_method'];
+        $payment->payment_status = 'Đang chờ xử lý';
+        $payment->save();
+        $payment_id = $payment->payment_id;
+
+        $order = new Order();
+        $order->customer_id = Session::get('customer_id');
+        $order->shipping_id = $shipping_id;
+        $order->payment_id = $payment_id;
+        $order->order_status = 1;
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $order->created_at = now();
+        $order->save();
+        $order_id = $order->order_id;
+
+        if (Session::get('cart') == true) {
+            foreach (Session::get('cart') as $key => $cart) {
+                $order_details = new OrderDetails();
+                $order_details->order_id = $order_id;
+                $order_details->product_id = $cart['product_id'];
+                $order_details->product_name = $cart['product_name'];
+                $order_details->product_price = $cart['product_price'];
+                $order_details->product_sales_quantity = $cart['product_qty'];
+                $order_details->product_coupon = $data['order_coupon'];
+                $order_details->product_feeship = $data['order_fee'];
+                $order_details->save();
+            }
+        }
+
+        Session::forget('coupon');
+        Session::forget('fee');
+        Session::forget('cart');
     }
 }
