@@ -131,7 +131,7 @@
                                 <?php
                                     } else {
                                 ?>
-                                <li><a href="{{ URL::to('/login-checkout') }}"><i class="fa fa-lock"></i>Đăng nhập</a>
+                                <li><a href="{{ URL::to('/login-home') }}"><i class="fa fa-lock"></i>Đăng nhập</a>
                                 </li>
                                 <?php
                                     }   
@@ -373,6 +373,84 @@
 
     <script src="{{ asset('frontend/js/sweetalert.min.js') }}"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.send_order').click(function() {
+
+                // Lấy tất cả dữ liệu từ form trước khi mở popup
+                var shipping_name = $('.shipping_name').val();
+                var shipping_address = $('.shipping_address').val();
+                var shipping_phone = $('.shipping_phone').val();
+                var shipping_email = $('.shipping_email').val();
+                var shipping_note = $('.shipping_note').val();
+                var shipping_method = $('.payment_select').val();
+                var order_fee = $('.order_fee').val();
+                var order_coupon = $('.order_coupon').val();
+                var _token = $('input[name="_token"]').val();
+
+                // Sử dụng cú pháp Swal.fire().then() của SweetAlert 2
+                Swal.fire({
+                    title: 'Xác nhận đơn hàng',
+                    text: "Đơn hàng sẽ không được hoàn trả khi đặt, bạn có muốn đặt không?",
+                    icon: 'warning', // 'type' đã được đổi thành 'icon'
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Cảm ơn, Mua hàng',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    // Kiểm tra xem người dùng có nhấn nút "confirm" không
+                    if (result.isConfirmed) {
+
+                        $.ajax({
+                            url: "{{ url('/confirm-order') }}",
+                            method: 'POST',
+                            data: {
+                                shipping_name: shipping_name,
+                                shipping_address: shipping_address,
+                                shipping_phone: shipping_phone,
+                                shipping_email: shipping_email,
+                                shipping_note: shipping_note,
+                                shipping_method: shipping_method,
+                                order_fee: order_fee,
+                                order_coupon: order_coupon,
+                                _token: _token
+                            },
+                            success: function() {
+                                Swal.fire(
+                                    'Đã đặt hàng!',
+                                    'Đơn hàng của bạn đã được gửi thành công.',
+                                    'success'
+                                );
+
+                                // CHUYỂN location.reload VÀO ĐÂY
+                                // Chỉ tải lại trang sau khi đã nhận được phản hồi thành công từ server
+                                window.setTimeout(function() {
+                                    location.reload();
+                                }, 3000);
+                            },
+                            error: function() {
+                                Swal.fire(
+                                    'Lỗi!',
+                                    'Đã có lỗi xảy ra, vui lòng thử lại.',
+                                    'error'
+                                );
+                            }
+                        });
+
+                    } else {
+                        Swal.fire(
+                            'Đã hủy',
+                            'Đơn hàng chưa được gửi.',
+                            'error'
+                        );
+                    }
+                });
+            });
+        });
+    </script>
+
     <script type="text/javascript">
         $(document).ready(function() {
             $('.add-to-cart').click(function() {
@@ -396,35 +474,31 @@
                         _token: _token
                     },
                     success: function(data) {
-                        swal({
-                                title: "Thành công!",
-                                text: "Sản phẩm đã được thêm vào giỏ hàng của bạn.",
-                                icon: "success", // Thay 'type' bằng 'icon'
-                                buttons: {
-                                    cancel: {
-                                        text: "Xem tiếp",
-                                        value: null,
-                                        visible: true,
-                                        className: "",
-                                        closeModal: true,
-                                    },
-                                    confirm: {
-                                        text: "Đi đến giỏ hàng",
-                                        value: true,
-                                        visible: true,
-                                        className: "btn-success", // Thêm class CSS cho nút
-                                        closeModal: true
-                                    }
-                                }
-                            })
-                            .then((value) => {
-                                // 'value' sẽ là true nếu người dùng bấm nút 'confirm' (Đi đến giỏ hàng)
-                                if (value) {
-                                    window.location.href = "{{ url('/gio-hang') }}";
-                                }
-                            });
+                        // SỬA LẠI TỪ ĐÂY: Dùng Swal.fire() và cấu trúc options mới
+                        Swal.fire({
+                            title: 'Đã thêm sản phẩm',
+                            text: 'Sản phẩm đã được thêm vào giỏ hàng của bạn.',
+                            icon: 'success',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Đi đến giỏ hàng',
+                            cancelButtonText: 'Xem tiếp'
+                        }).then((result) => {
+                            // 'result.isConfirmed' sẽ là true nếu người dùng bấm nút 'confirm'
+                            if (result.isConfirmed) {
+                                window.location.href = "{{ url('/gio-hang') }}";
+                            }
+                        });
+                    },
+                    error: function() {
+                        // Thêm phần xử lý lỗi để người dùng biết
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: 'Có lỗi xảy ra, vui lòng thử lại.',
+                            icon: 'error'
+                        });
                     }
-
                 });
             });
         });
@@ -455,7 +529,6 @@
                 });
             });
         });
-        
     </script>
     <script type="text/javascript">
         $(document).ready(function() {
@@ -484,7 +557,6 @@
 
             });
         });
-
     </script>
 
 

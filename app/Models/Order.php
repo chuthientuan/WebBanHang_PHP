@@ -12,8 +12,8 @@ class Order extends Model
         'customer_id',
         'shipping_id',
         'payment_id',
-        'order_total',
-        'order_status'
+        'order_status',
+        'created_at'
     ];
     public $timestamps = false;
     public function customer()

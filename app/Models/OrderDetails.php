@@ -13,7 +13,9 @@ class OrderDetails extends Model
         'product_id',
         'product_name',
         'product_price',
-        'product_sales_quantity'
+        'product_sales_quantity',
+        'product_coupon',
+        'product_feeship'
     ];
     public $timestamps = false;
     public function order()
