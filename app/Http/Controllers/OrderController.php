@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coupon;
+use App\Models\Customer;
+use App\Models\Order;
+use App\Models\OrderDetails;
+use App\Models\Payment;
+use App\Models\Shipping;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Gloudemans\Shoppingcart\Facades\Cart;
@@ -23,34 +29,36 @@ class OrderController extends Controller
     public function manage_order()
     {
         $this->AuthLogin();
-        $all_order = DB::table('tbl_order')
-            ->join('tbl_customer', 'tbl_order.customer_id', '=', 'tbl_customer.customer_id')
-            ->select('tbl_order.*', 'tbl_customer.customer_name')
-            ->orderBy('tbl_order.order_id', 'desc')->get();
-        $manager_order = view('admin.manage_order')->with('all_order', $all_order);
-        return view('admin_layout')->with('admin.manage_order', $manager_order);
+        $order = Order::orderby('created_at', 'DESC')->get();
+        return view('admin.manage_order')->with(compact('order'));
     }
 
     public function view_order($order_id)
     {
-        $this->AuthLogin();
-        $order = DB::table('tbl_order')
-            ->join('tbl_customer', 'tbl_order.customer_id', '=', 'tbl_customer.customer_id')
-            ->join('tbl_shipping', 'tbl_order.shipping_id', '=', 'tbl_shipping.shipping_id')
-            ->select('tbl_order.*', 'tbl_customer.*', 'tbl_shipping.*')
-            ->where('tbl_order.order_id', $order_id)
-            ->first();
+        $order_details = OrderDetails::where('order_id', $order_id)->get();
+        $order = Order::where('order_id', $order_id)->get();
+        foreach ($order as $key => $ord) {
+            $customer_id = $ord->customer_id;
+            $shipping_id = $ord->shipping_id;
+            $payment_id = $ord->payment_id;
+        }
+        $customer = Customer::where('customer_id', $customer_id)->first();
+        $shipping = Shipping::where('shipping_id', $shipping_id)->first();
+        $payment = Payment::where('payment_id', $payment_id)->first();
+        $product = OrderDetails::with('product')->where('order_id', $order_id)->get();
 
+        foreach ($product as $key => $order_d) {
+            $product_coupon = $order_d->product_coupon;
+        }
+        if ($product_coupon != 'no') {
+            $coupon = Coupon::where('coupon_code', $product_coupon)->first();
+            $coupon_condition = $coupon->coupon_condition;
+            $coupon_number = $coupon->coupon_number;
+        } else {
+            $coupon_condition = 2;
+            $coupon_number = 0;
+        }
 
-        $order_details = DB::table('tbl_order_details')
-            ->where('tbl_order_details.order_id', $order_id)
-            ->get();
-
-        // Gửi 2 biến riêng biệt qua view
-        $manager_order = view('admin.view_order')
-            ->with('order', $order)
-            ->with('order_details', $order_details);
-
-        return view('admin_layout')->with('admin.view_order', $manager_order);
+        return view('admin.view_order')->with(compact('order_details', 'customer', 'shipping', 'payment', 'product', 'coupon_condition', 'coupon_number'));
     }
 }

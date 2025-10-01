@@ -371,8 +371,6 @@
     <script src="{{ asset('frontend/js/jquery.prettyPhoto.js') }}"></script>
     <script src="{{ asset('frontend/js/main.js') }}"></script>
 
-    <script src="{{ asset('frontend/js/sweetalert.min.js') }}"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
         $(document).ready(function() {
@@ -391,6 +389,7 @@
 
                 // Sử dụng cú pháp Swal.fire().then() của SweetAlert 2
                 Swal.fire({
+                    toast: false,
                     title: 'Xác nhận đơn hàng',
                     text: "Đơn hàng sẽ không được hoàn trả khi đặt, bạn có muốn đặt không?",
                     icon: 'warning', // 'type' đã được đổi thành 'icon'
@@ -476,6 +475,7 @@
                     success: function(data) {
                         // SỬA LẠI TỪ ĐÂY: Dùng Swal.fire() và cấu trúc options mới
                         Swal.fire({
+                            toast: false,
                             title: 'Đã thêm sản phẩm',
                             text: 'Sản phẩm đã được thêm vào giỏ hàng của bạn.',
                             icon: 'success',

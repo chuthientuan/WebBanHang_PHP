@@ -148,7 +148,7 @@
                                 <input type="submit" class="btn btn-default check_coupon" name="check_coupon"
                                     value="Tính mã giảm giá">
                             </form>
-                            <a class="btn btn-default check_out" href="{{ URL::to('/checkout') }}">Thanh Toán</a>
+                            {{-- <a class="btn btn-default check_out" href="{{ URL::to('/checkout') }}">Thanh Toán</a> --}}
                         </td>
                     </tr>
                 @endif
