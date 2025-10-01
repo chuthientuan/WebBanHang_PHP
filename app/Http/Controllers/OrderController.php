@@ -61,4 +61,12 @@ class OrderController extends Controller
 
         return view('admin.view_order')->with(compact('order_details', 'customer', 'shipping', 'payment', 'product', 'coupon_condition', 'coupon_number'));
     }
+
+    public function delete_order($order_id)
+    {
+        $this->AuthLogin();
+        Order::where('order_id', $order_id)->delete();
+        Session::put('message', 'Xóa đơn hàng thành công');
+        return Redirect::to('/manage-order');
+    }
 }
