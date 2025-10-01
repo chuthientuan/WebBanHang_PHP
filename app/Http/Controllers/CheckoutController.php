@@ -274,11 +274,13 @@ class CheckoutController extends Controller
         $payment->save();
         $payment_id = $payment->payment_id;
 
+        $order_code = substr(md5(microtime()), rand(0, 26), 5);
         $order = new Order();
         $order->customer_id = Session::get('customer_id');
         $order->shipping_id = $shipping_id;
         $order->payment_id = $payment_id;
         $order->order_status = 1;
+        $order->order_code = $order_code;
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $order->created_at = now();
         $order->save();

@@ -31,7 +31,7 @@
             <!--logo start-->
             <div class="brand">
                 <a href="index.html" class="logo">
-                    VISITORS
+                    ADMIN
                 </a>
                 <div class="sidebar-toggle-box">
                     <div class="fa fa-bars"></div>
@@ -84,7 +84,7 @@
                         </li>
                         <li class="sub-menu">
                             <a href="javascript:;">
-                                <i class="fa fa-sitemap"></i>
+                                <i class="fa fa-list-ul"></i>
                                 <span>Danh mục sản phẩm</span>
                             </a>
                             <ul class="sub">
@@ -95,7 +95,7 @@
                         </li>
                         <li class="sub-menu">
                             <a href="javascript:;">
-                                <i class="fa fa-gift"></i>
+                                <i class="fa fa-ticket"></i>
                                 <span>Mã Giảm Giá</span>
                             </a>
                             <ul class="sub">
@@ -106,17 +106,14 @@
 
                         <li class="sub-menu">
                             <a href="javascript:;">
-                                <i class="fa fa-gift"></i>
-                                <span>vận chuyển </span>
+                                <i class="fa fa-truck"></i>
+                                <span>Vận chuyển</span>
                             </a>
                             <ul class="sub">
-                                <li><a href="{{ URL::to('/delivery') }}">quản lý vận chuyển </a></li>
+                                <li><a href="{{ URL::to('/delivery') }}">Quản lý vận chuyển </a></li>
                                 <li><a href="{{ URL::to('/delivery') }}">Liệt kê vận chuyển </a></li>
                             </ul>
                         </li>
-
-
-
                         <li class="sub-menu">
                             <a href="javascript:;">
                                 <i class="fa fa-tags"></i>
@@ -130,8 +127,8 @@
                         </li>
                         <li class="sub-menu">
                             <a href="javascript:;">
-                                <i class="fa fa-cube"></i>
-                                <span>Thêm sản phẩm</span>
+                                <i class="fa fa-cubes"></i>
+                                <span>Sản phẩm</span>
                             </a>
                             <ul class="sub">
                                 <li><a href="{{ URL::to('/add-product') }}">Thêm sản phẩm </a></li>
@@ -159,7 +156,7 @@
             <!-- footer -->
             <div class="footer">
                 <div class="wthree-copyright">
-                    <p>© 2017 Visitors. All rights reserved | Design by <a href="http://w3layouts.com">W3layouts</a>
+                    <p>
                     </p>
                 </div>
             </div>
@@ -177,8 +174,9 @@
     <script type="text/javascript">
         $(document).ready(function() {
             fetch_delivery();
+
             function fetch_delivery() {
-                var _token = $('input[name="_token"]').val(); 
+                var _token = $('input[name="_token"]').val();
                 $.ajax({
                     url: "{{ url('/select-feeship') }}",
                     method: 'POST',
@@ -186,7 +184,7 @@
                         _token: _token
                     },
                     success: function(data) {
-                          $('#load_delivery').html(data);
+                        $('#load_delivery').html(data);
                     }
                 });
             }
@@ -226,7 +224,7 @@
                         _token: _token
                     },
                     success: function(data) {
-                       fetch_delivery();
+                        fetch_delivery();
                     }
                 });
             });

@@ -13,6 +13,7 @@ class Order extends Model
         'shipping_id',
         'payment_id',
         'order_status',
+        'order_code',
         'created_at'
     ];
     public $timestamps = false;
