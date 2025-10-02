@@ -71,7 +71,7 @@
                                 </select>
                             </div>
 
-                            <button type="submit" name="add_product" class="btn btn-info">Thêm Danh Mục</button>
+                            <button type="submit" name="add_product" class="btn btn-info">Thêm Sản Phẩm</button>
                         </form>
                     </div>
 

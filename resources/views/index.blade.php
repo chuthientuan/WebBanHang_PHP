@@ -100,8 +100,6 @@
                     <div class="col-sm-8">
                         <div class="shop-menu pull-right">
                             <ul class="nav navbar-nav">
-
-                                <li><a href="#"><i class="fa fa-star"></i>Yêu thích</a></li>
                                 <?php
                                     $customer_id = Session::get('customer_id');
                                     if ($customer_id != NULL) {
@@ -218,7 +216,7 @@
                             <div class="video-gallery text-center">
                                 <a href="#">
                                     <div class="iframe-img">
-                                        <img src="{{ asset('frontend/images/home/iframe1.png') }}" alt="" />
+                                        <img src="{{ asset('frontend/images/home/foot1.jpg') }}" alt="" />
                                     </div>
                                     <div class="overlay-icon">
                                         <i class="fa fa-play-circle-o"></i>
@@ -233,7 +231,7 @@
                             <div class="video-gallery text-center">
                                 <a href="#">
                                     <div class="iframe-img">
-                                        <img src="{{ asset('frontend/images/home/iframe2.png') }}" alt="" />
+                                        <img src="{{ asset('frontend/images/home/foot2.jpg') }}" alt="" />
                                     </div>
                                     <div class="overlay-icon">
                                         <i class="fa fa-play-circle-o"></i>
@@ -248,7 +246,7 @@
                             <div class="video-gallery text-center">
                                 <a href="#">
                                     <div class="iframe-img">
-                                        <img src="{{ asset('frontend/images/home/iframe3.png') }}" alt="" />
+                                        <img src="{{ asset('frontend/images/home/foot3.jpg') }}" alt="" />
                                     </div>
                                     <div class="overlay-icon">
                                         <i class="fa fa-play-circle-o"></i>
@@ -263,7 +261,7 @@
                             <div class="video-gallery text-center">
                                 <a href="#">
                                     <div class="iframe-img">
-                                        <img src="{{ asset('frontend/images/home/iframe4.png') }}" alt="" />
+                                        <img src="{{ asset('frontend/images/home/foot4.jpg') }}" alt="" />
                                     </div>
                                     <div class="overlay-icon">
                                         <i class="fa fa-play-circle-o"></i>

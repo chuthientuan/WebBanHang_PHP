@@ -105,14 +105,10 @@
                         </li>
 
                         <li class="sub-menu">
-                            <a href="javascript:;">
+                            <a href="{{ URL::to('/delivery') }}">
                                 <i class="fa fa-truck"></i>
                                 <span>Vận chuyển</span>
                             </a>
-                            <ul class="sub">
-                                <li><a href="{{ URL::to('/delivery') }}">Quản lý vận chuyển </a></li>
-                                <li><a href="{{ URL::to('/delivery') }}">Liệt kê vận chuyển </a></li>
-                            </ul>
                         </li>
                         <li class="sub-menu">
                             <a href="javascript:;">
