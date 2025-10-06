@@ -16,9 +16,9 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ $customer->customer_name }}</td>
-                            <td>{{ $customer->customer_phone }}</td>
-                            <td>{{ $customer->customer_email }}</td>
+                            <td>{{ $order->customer->customer_name }}</td>
+                            <td>{{ $order->customer->customer_phone }}</td>
+                            <td>{{ $order->customer->customer_email }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -45,13 +45,13 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ $shipping->shipping_name }}</td>
-                            <td>{{ $shipping->shipping_address }}</td>
-                            <td>{{ $shipping->shipping_phone }}</td>
-                            <td>{{ $shipping->shipping_email }}</td>
-                            <td>{{ $shipping->shipping_note }}</td>
+                            <td>{{ $order->shipping->shipping_name }}</td>
+                            <td>{{ $order->shipping->shipping_address }}</td>
+                            <td>{{ $order->shipping->shipping_phone }}</td>
+                            <td>{{ $order->shipping->shipping_email }}</td>
+                            <td>{{ $order->shipping->shipping_note }}</td>
                             <td>
-                                @if ($payment->payment_method == 0)
+                                @if ($order->payment->payment_method == 0)
                                     Chuyển khoản
                                 @else
                                     Tiền mặt
@@ -75,6 +75,7 @@
                         <tr>
                             <th>Thứ tự</th>
                             <th>Tên sản phẩm</th>
+                            <th>SL kho</th>
                             <th>Mã giảm giá</th>
                             <th>Phí ship</th>
                             <th>Số lượng</th>
@@ -87,15 +88,16 @@
                             $i = 0;
                             $total = 0;
                         @endphp
-                        @foreach ($product as $pro)
+                        @foreach ($order->orderDetails as $pro)
                             @php
                                 $i++;
                                 $subtotal = $pro->product_price * $pro->product_sales_quantity;
                                 $total += $subtotal;
                             @endphp
-                            <tr>
+                            <tr class="color_qty_{{ $pro->product_id }}">
                                 <td><i>{{ $i }}</i></td>
                                 <td>{{ $pro->product_name }}</td>
+                                <td>{{ $pro->product->product_quantity }}</td>
                                 <td>
                                     @if ($pro->product_coupon != 'no')
                                         {{ $pro->product_coupon }}
@@ -104,7 +106,16 @@
                                     @endif
                                 </td>
                                 <td>{{ number_format($pro->product_feeship, 0, ',', '.') }} đ</td>
-                                <td>{{ $pro->product_sales_quantity }}</td>
+                                <td>
+                                    <input type="number" class="order_qty_{{ $pro->product_id }}"
+                                        value="{{ $pro->product_sales_quantity }}" readonly name="product_sales_quantity"
+                                        style="border:none; background:transparent;">
+                                    <input type="hidden" name="order_product_id" class="order_product_id"
+                                        value="{{ $pro->product_id }}">
+                                    <input type="hidden" name="order_qty_storage"
+                                        class="order_qty_storage_{{ $pro->product_id }}"
+                                        value="{{ $pro->product->product_quantity }}">
+                                </td>
                                 <td>{{ number_format($pro->product_price, 0, ',', '.') }} đ</td>
                                 <td>{{ number_format($subtotal, 0, ',', '.') }}
                                     đ</td>
@@ -136,6 +147,24 @@
 
                                 Phí ship : {{ number_format($pro->product_feeship, 0, ',', '.') }}đ</br>
                                 Thanh toán: {{ number_format($total_coupon, 0, ',', '.') }}d
+                            </td>
+                        </tr>
+                        <tr>    
+                            <td colspan="6">
+                                <form>
+                                    @csrf
+                                    <select class="form-control order_details" data-order-id="{{ $order->order_id }}">
+                                        <option value="1" {{ $order->order_status == 1 ? 'selected' : '' }}>
+                                            Chưa xử lý
+                                        </option>
+                                        <option value="2" {{ $order->order_status == 2 ? 'selected' : '' }}>
+                                            Đã xử lý - Đã giao hàng
+                                        </option>
+                                        <option value="3" {{ $order->order_status == 3 ? 'selected' : '' }}>
+                                            Hủy đơn hàng - Tạm giữ
+                                        </option>
+                                    </select>
+                                </form>
                             </td>
                         </tr>
                     </tbody>
