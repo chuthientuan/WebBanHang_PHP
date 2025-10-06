@@ -33,41 +33,60 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if (Session::get('cart') == true)
+                            @if (Session::has('cart') && count(Session::get('cart')) > 0)
                                 @php
                                     $tongtien = 0;
                                 @endphp
 
                                 @foreach (Session::get('cart') as $key => $cart)
                                     @php
-                                        $thanhtien = $cart['product_price'] * $cart['product_qty'];
+                                        $product_id = $cart['product_id'];
+                                        $product_stock_info = $products_in_stock[$product_id] ?? null;
+                                        $error_message = '';
+
+                                        if (!$product_stock_info) {
+                                            $error_message = 'Sản phẩm này hiện không còn kinh doanh.';
+                                            $is_checkout_disabled = true;
+                                        } elseif ($cart['product_qty'] > $product_stock_info->product_quantity) {
+                                            $error_message =
+                                                'Số lượng tồn kho không đủ (chỉ còn ' .
+                                                $product_stock_info->product_quantity .
+                                                '). Vui lòng cập nhật lại.';
+                                            $is_checkout_disabled = true;
+                                        }
+
+                                        $price = $cart['product_price'] ?? 0;
+                                        $qty = $cart['product_qty'] ?? 1;
+                                        $thanhtien = $price * $qty;
                                         $tongtien += $thanhtien;
                                     @endphp
                                     <tr>
                                         <td class="cart_product">
-                                            <img src="{{ asset('public/Uploads/product/' . $cart['product_image']) }}"
-                                                alt="{{ $cart['product_name'] }}" width="50" />
+                                            {{-- Kiểm tra key 'product_image' trước khi dùng --}}
+                                            <img src="{{ asset('public/Uploads/product/' . ($cart['product_image'] ?? 'default.jpg')) }}"
+                                                alt="{{ $cart['product_name'] ?? 'Sản phẩm' }}" width="50" />
                                         </td>
                                         <td class="cart_description">
                                             <h4><a href=""></a></h4>
-                                            <p>{{ $cart['product_name'] }}</p>
+                                            <p>{{ $cart['product_name'] ?? 'Không có tên' }}</p>
                                         </td>
                                         <td class="cart_price">
-                                            <p>{{ number_format($cart['product_price'], 0, ',', '.') }} vnđ</p>
+                                            <p>{{ number_format($price, 0, ',', '.') }} vnđ</p>
                                         </td>
                                         <td class="cart_quantity">
                                             <div class="cart_quantity_button">
                                                 <input class="cart_quantity" type="number" min="1"
-                                                    name="cart_qty[{{ $cart['session_id'] }}]"
-                                                    value="{{ $cart['product_qty'] }}">
+                                                    name="cart_qty[{{ $cart['session_id'] ?? '' }}]"
+                                                    value="{{ $qty }}">
                                             </div>
                                         </td>
                                         <td class="cart_total">
-                                            <p class="cart_total_price">{{ number_format($thanhtien, 0, ',', '.') }} vnđ</p>
+                                            <p class="cart_total_price">{{ number_format($thanhtien, 0, ',', '.') }} vnđ
+                                            </p>
                                         </td>
                                         <td class="cart_delete">
                                             <a class="cart_quantity_delete"
-                                                href="{{ url('/del-product/' . $cart['session_id']) }}"><i
+                                                href="{{ url('/del-product/' . ($cart['session_id'] ?? '')) }}"><i
                                                     class="fa fa-times"></i></a>
                                         </td>
                                     </tr>
@@ -148,36 +167,11 @@
                                 <input type="submit" class="btn btn-default check_coupon" name="check_coupon"
                                     value="Tính mã giảm giá">
                             </form>
-                            {{-- <a class="btn btn-default check_out" href="{{ URL::to('/checkout') }}">Thanh Toán</a> --}}
                         </td>
                     </tr>
                 @endif
                 </table>
             </div>
         </div>
-    </section> <!--/#cart_items-->
-    {{-- <section id="do_action">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="total_area">
-                        <ul>
-                            <li>Tổng Tiền : <span>{{ number_format($tongtien, 0, ',', '.') }} vnđ</span></li>
-                            <li>Thuế<span></span></li>
-                            <li>Phí vận chuyển<span>Free</span></li>
-                            <li>Tiền sau giảm <span></span></li>
-                        </ul>
-                        
-                        <form action="{{ url('/check-coupon') }}" method="POST">
-                            @csrf
-                            <input type="text" class="form-control" name="coupon" placeholder="Nhập mã giảm giá"><br>
-                            <input type="submit" class="btn btn-default check_coupon" value="Tính Mã Giảm Giá"
-                                name="check_coupon">
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section><!--/#do_action--> --}}
-
+    </section>
 @endsection

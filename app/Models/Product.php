@@ -9,14 +9,16 @@ class Product extends Model
     protected $table = 'tbl_product';
     protected $primaryKey = 'product_id';
     protected $fillable = [
-        'category_id ',
-        'brand_id ',
+        'category_id',
+        'brand_id',
         'product_name',
         'product_desc',
         'product_content',
         'product_price',
         'product_image',
-        'product_status'
+        'product_status',
+        'product_quantity',
+        'product_sold'
     ];
     public $timestamps = false;
     public function category()

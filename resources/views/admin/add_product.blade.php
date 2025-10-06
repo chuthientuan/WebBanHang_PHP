@@ -45,6 +45,12 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="exampleInputPassword1">Số Lượng Sản Phẩm</label>
+                                <input type="number" name="product_quantity" class="form-control" id="exampleInputEmail1"
+                                    placeholder="Điền số lượng">
+                            </div>
+
+                            <div class="form-group">
                                 <label for="exampleInputPassword1">Danh Mục Sản Phẩm </label>
                                 <select name="product_cate" class="form-control input-sm m-bot15">
                                     @foreach ($cate_product as $key => $cate)
