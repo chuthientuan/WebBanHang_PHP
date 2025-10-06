@@ -105,6 +105,7 @@ Route::post('/confirm-order', [CheckoutController::class, 'confirm_order']);
 Route::get('/manage-order', [OrderController::class, 'manage_order']);
 Route::get('/view-order/{orderId}', [OrderController::class, 'view_order']);
 Route::get('/delete-order/{orderId}', [OrderController::class, 'delete_order']);
+Route::post('/update-order-quantity-status', [OrderController::class, 'update_order_quantity_status']);
 
 //Delivery
 Route::get('/delivery', [DeliveryController::class, 'delivery']);

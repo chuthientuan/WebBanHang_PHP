@@ -501,6 +501,61 @@
             });
         });
     </script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.add-to-cart-detail').click(function(e) {
+                e.preventDefault(); // Ngăn hành vi mặc định
+
+                // Tìm form cha gần nhất để lấy dữ liệu
+                var form = $(this).closest('form');
+
+                var qty = form.find('input[name="qty"]').val();
+                var product_id = form.find('input[name="productid_hidden"]').val();
+                var _token = form.find('input[name="_token"]').val();
+
+                // Gửi AJAX request đến hàm save_cart
+                $.ajax({
+                    url: '{{ url('/save-cart') }}', // Gọi đến route của hàm save_cart
+                    method: 'POST',
+                    data: {
+                        qty: qty,
+                        productid_hidden: product_id,
+                        _token: _token
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            Swal.fire({
+                                title: 'Thành công!',
+                                text: response.message,
+                                icon: 'success',
+                                showCancelButton: false,
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                // Chuyển hướng đến trang giỏ hàng sau khi người dùng bấm OK
+                                if (result.isConfirmed) {
+                                    window.location.href = "{{ url('/gio-hang') }}";
+                                }
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        // Xử lý lỗi (ví dụ: không đủ hàng)
+                        var errorMsg = 'Có lỗi xảy ra, vui lòng thử lại.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        }
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: errorMsg,
+                            icon: 'error'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
     <script type="text/javascript">
         $(document).ready(function() {
             $('.choose').on('change', function() {

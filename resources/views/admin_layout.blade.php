@@ -252,6 +252,88 @@
     <script>
         CKEDITOR.replace('ckeditor1');;
     </script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.order_details').on('change', function() {
+                // --- PHẦN 1: KIỂM TRA SỐ LƯỢNG TRƯỚC KHI GỬI ---
+
+                // Reset lại màu của tất cả các hàng
+                $('tbody tr.stock-error').removeClass('stock-error').css('background-color', '');
+
+                var isValid = true; // Cờ kiểm tra
+                var invalid_rows = []; // Mảng chứa các hàng bị lỗi
+
+                // Lặp qua từng sản phẩm để kiểm tra
+                $("input[name='order_product_id']").each(function() {
+                    var product_id = $(this).val();
+                    var row = $('.color_qty_' + product_id); // Lấy thẻ <tr> tương ứng
+
+                    var order_qty = parseInt(row.find("input[name='product_sales_quantity']")
+                .val());
+                    var storage_qty = parseInt(row.find("input[name='order_qty_storage']").val());
+
+                    if (order_qty > storage_qty) {
+                        isValid = false; // Đánh dấu là có lỗi
+                        invalid_rows.push(row); // Thêm hàng bị lỗi vào mảng
+                    }
+                });
+
+                // --- PHẦN 2: QUYẾT ĐỊNH HÀNH ĐỘNG DỰA TRÊN KẾT QUẢ KIỂM TRA ---
+
+                // TRƯỜNG HỢP 1: NẾU KHÔNG ĐỦ HÀNG
+                if (!isValid) {
+                    // Hiển thị một thông báo lỗi duy nhất
+                    alert(
+                        'Không đủ số lượng hàng trong kho! Vui lòng kiểm tra lại các sản phẩm được tô đỏ.');
+
+                    // Lặp qua mảng các hàng bị lỗi và tô màu
+                    invalid_rows.forEach(function(row) {
+                        row.css('background-color', '#ffe8e8'); // Áp dụng CSS trực tiếp
+                    });
+
+                    // Tự động tải lại trang sau 4 giây để reset dropdown
+                    setTimeout(function() {
+                        location.reload();
+                    }, 4000);
+
+                    // TRƯỜNG HỢP 2: NẾU TẤT CẢ ĐỀU HỢP LỆ
+                } else {
+                    // Lấy các thông tin cần thiết
+                    var order_status = $(this).val();
+                    var order_id = $(this).data('order-id');
+                    var _token = $('input[name="_token"]').val();
+                    var quantity = [];
+                    $("input[name='product_sales_quantity']").each(function() {
+                        quantity.push($(this).val());
+                    });
+                    var order_product_id = [];
+                    $("input[name='order_product_id']").each(function() {
+                        order_product_id.push($(this).val());
+                    });
+
+                    // Gửi AJAX đi như bình thường
+                    $.ajax({
+                        url: '{{ url('/update-order-quantity-status') }}',
+                        method: 'POST',
+                        data: {
+                            order_status: order_status,
+                            order_id: order_id,
+                            quantity: quantity,
+                            order_product_id: order_product_id,
+                            _token: _token
+                        },
+                        success: function(response) {
+                            alert(response.message || 'Cập nhật thành công!');
+                            location.reload();
+                        },
+                        error: function() {
+                            alert('Đã có lỗi xảy ra phía server.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
     <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/flot-chart/excanvas.min.js"></script><![endif]-->
     <script src="{{ asset('backend/js/jquery.scrollTo.js') }}"></script>
     <!-- morris JavaScript -->
