@@ -6,7 +6,6 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 
@@ -69,27 +68,42 @@ class ProductController extends Controller
     public function unactive_product($product_id)
     {
         $this->AuthLogin();
-        DB::table('tbl_product')->where('product_id', $product_id)->update(['product_status' => 1]);
-        Session::put('message', 'Không kích hoạt danh mục sản phẩm thành công');
+        $product = Product::find($product_id);
+        if ($product) {
+            $product->product_status = 1;
+            $product->save();
+            Session::put('message', 'Kích hoạt danh mục sản phẩm thành công');
+        } else {
+            Session::put('message', 'Không tìm thấy danh mục');
+        }
         return Redirect::to('all-product');
     }
 
     public function active_product($product_id)
     {
         $this->AuthLogin();
-        DB::table('tbl_product')->where('product_id', $product_id)->update(['product_status' => 0]);
-        Session::put('message', 'Kích hoạt danh mục sản phẩm thành công');
+        $product = Product::find($product_id);
+        if ($product) {
+            $product->product_status = 0;
+            $product->save();
+            Session::put('message', 'Bỏ kích hoạt danh mục sản phẩm thành công');
+        } else {
+            Session::put('message', 'Không tìm thấy danh mục');
+        }
         return Redirect::to('all-product');
     }
 
     public function edit_product($product_id)
     {
         $this->AuthLogin();
-        $cate_product = DB::table('tbl_category_product')->orderBy('category_id', 'desc')->get();
-        $brand_product = DB::table('tbl_brand')->orderBy('brand_id', 'desc')->get();
+        $cate_product = Category::orderBy('category_id', 'desc')->get();
+        $brand_product = Brand::orderBy('brand_id', 'desc')->get();
 
-        $edit_product = DB::table('tbl_product')->where('product_id', $product_id)->get();
-        $manager_product = view('admin.edit_product')->with('edit_product', $edit_product)->with('cate_product', $cate_product)
+        $edit_product = Product::where('product_id', $product_id)->get();
+
+        $manager_product = view('admin.edit_product')
+            ->with('edit_product', $edit_product)
+            ->with('cate_product', $cate_product)
             ->with('brand_product', $brand_product);
         return view('admin_layout')->with('admin.edit_product', $manager_product);
     }
@@ -97,29 +111,30 @@ class ProductController extends Controller
     public function update_product(Request $request, $product_id)
     {
         $this->AuthLogin();
-        $data = array();
-        $data['product_name'] = $request->product_name;
-        $data['product_price'] = $request->product_price;
-        $data['product_desc'] = $request->product_desc;
-        $data['product_content'] = $request->product_content;
-        $data['category_id'] = $request->product_cate;
-        $data['brand_id'] = $request->product_brand;
-        $data['product_status'] = $request->product_status;
-        $data['product_quantity'] = $request->product_quantity;
+        $data = [
+            'product_name' => $request->product_name,
+            'product_price' => $request->product_price,
+            'product_desc' => $request->product_desc,
+            'product_content' => $request->product_content,
+            'category_id' => $request->product_cate,
+            'brand_id' => $request->product_brand,
+            'product_status' => $request->product_status,
+            'product_quantity' => $request->product_quantity,
+        ];
 
         $get_image = $request->file('product_image');
         if ($get_image) {
             $get_name_image = $get_image->getClientOriginalName();
             $name_image = current(explode('.', $get_name_image));
             $new_image = $name_image . rand(0, 99) . '.' . $get_image->getClientOriginalExtension();
+            // Note: The original path 'public/Uploads/product' is relative to the public directory.
             $get_image->move('public/Uploads/product', $new_image);
             $data['product_image'] = $new_image;
-            DB::table('tbl_product')->where('product_id', $product_id)->update($data);
-            Session::put('message', 'Cập nhật sản phẩm thành công');
-            return Redirect::to('all-product');
         }
 
-        DB::table('tbl_product')->where('product_id', $product_id)->update($data);
+        // Use Eloquent Model for update
+        Product::where('product_id', $product_id)->update($data);
+
         Session::put('message', 'Cập nhật sản phẩm thành công');
         return Redirect::to('all-product');
     }
@@ -127,7 +142,7 @@ class ProductController extends Controller
     public function delete_product($product_id)
     {
         $this->AuthLogin();
-        DB::table('tbl_product')->where('product_id', $product_id)->delete();
+        Product::destroy($product_id);
         Session::put('message', 'Xóa sản phẩm thành công');
         return Redirect::to('/all-product');
     }
@@ -135,25 +150,29 @@ class ProductController extends Controller
     //End Admin Page
     public function details_product($product_id)
     {
-        $cate_product = DB::table('tbl_category_product')->where('category_status', '1')->orderBy('category_id', 'desc')->get();
-        $brand_product = DB::table('tbl_brand')->where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
+        $cate_product = Category::where('category_status', '1')->orderBy('category_id', 'desc')->get();
+        $brand_product = Brand::where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
 
-        $details_product = DB::table('tbl_product')
-            ->join('tbl_category_product', 'tbl_category_product.category_id', '=', 'tbl_product.category_id')
-            ->join('tbl_brand', 'tbl_brand.brand_id', '=', 'tbl_product.brand_id')->orderBy('tbl_product.product_id', 'desc')
-            ->where('tbl_product.product_id', $product_id)->get();
+        $details_product = Product::with('category', 'brand')->find($product_id);
 
-        foreach ($details_product as $key => $value) {
-            $category_id = $value->category_id;
+        if (!$details_product) {
+            $category_id = null;
+        } else {
+            $category_id = $details_product->category_id;
         }
-        $related_product = DB::table('tbl_product')
-            ->join('tbl_category_product', 'tbl_category_product.category_id', '=', 'tbl_product.category_id')
-            ->join('tbl_brand', 'tbl_brand.brand_id', '=', 'tbl_product.brand_id')
-            ->where('tbl_category_product.category_id', $category_id)->whereNotIn('tbl_product.product_id', [$product_id])->get();
 
+        $related_product = collect();
+        if ($category_id) {
+            $related_product = Product::with(['category', 'brand'])
+                ->where('category_id', $category_id)
+                ->where('product_id', '!=', $product_id)
+                ->get();
+        }
 
-        return view('pages.product.show_details')->with('category', $cate_product)
-            ->with('brand', $brand_product)->with('product_details', $details_product)
+        return view('pages.product.show_details')
+            ->with('category', $cate_product)
+            ->with('brand', $brand_product)
+            ->with('product_details', $details_product)
             ->with('relate', $related_product);
     }
 }

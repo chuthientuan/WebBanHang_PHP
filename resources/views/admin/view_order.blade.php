@@ -149,7 +149,7 @@
                                 Thanh toán: {{ number_format($total_coupon, 0, ',', '.') }}d
                             </td>
                         </tr>
-                        <tr>    
+                        <tr>
                             <td colspan="6">
                                 <form>
                                     @csrf

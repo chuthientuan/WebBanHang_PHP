@@ -14,6 +14,7 @@ class Category extends Model
         'category_status'
     ];
     public $timestamps = false;
+    
     public function products()
     {
         return $this->hasMany(Product::class, 'category_id');

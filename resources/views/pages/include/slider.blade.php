@@ -17,8 +17,8 @@
                     </div>
                     <div class="item">
                         <div class="">
-                            <img src="{{ asset('frontend/images/home/nen2.jpg') }}" style="height: 497.39px" class="girl img-responsive"
-                                alt="" />
+                            <img src="{{ asset('frontend/images/home/nen2.jpg') }}" style="height: 497.39px"
+                                class="girl img-responsive" alt="" />
                         </div>
                     </div>
 

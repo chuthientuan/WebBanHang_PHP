@@ -3,15 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Coupon;
-use App\Models\Customer;
 use App\Models\Order;
-use App\Models\OrderDetails;
-use App\Models\Payment;
 use App\Models\Product;
-use App\Models\Shipping;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 
