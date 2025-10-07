@@ -269,7 +269,7 @@
                     var row = $('.color_qty_' + product_id); // Lấy thẻ <tr> tương ứng
 
                     var order_qty = parseInt(row.find("input[name='product_sales_quantity']")
-                .val());
+                        .val());
                     var storage_qty = parseInt(row.find("input[name='order_qty_storage']").val());
 
                     if (order_qty > storage_qty) {
@@ -284,7 +284,8 @@
                 if (!isValid) {
                     // Hiển thị một thông báo lỗi duy nhất
                     alert(
-                        'Không đủ số lượng hàng trong kho! Vui lòng kiểm tra lại các sản phẩm được tô đỏ.');
+                        'Không đủ số lượng hàng trong kho! Vui lòng kiểm tra lại các sản phẩm được tô đỏ.'
+                    );
 
                     // Lặp qua mảng các hàng bị lỗi và tô màu
                     invalid_rows.forEach(function(row) {

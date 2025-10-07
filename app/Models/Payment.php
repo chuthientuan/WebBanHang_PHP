@@ -9,12 +9,12 @@ class Payment extends Model
     protected $table = 'tbl_payment';
     protected $primaryKey = 'payment_id';
     protected $fillable = [
-        'payment_method',
-        'payment_status'
+        'payment_method'
     ];
     public $timestamps = false;
+    
     public function order()
     {
-        return $this->hasMany(Order::class, 'payment_id');
+        return $this->hasOne(Order::class, 'payment_id', 'payment_id');
     }
 }

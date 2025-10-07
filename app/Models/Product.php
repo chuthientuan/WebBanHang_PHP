@@ -21,18 +21,22 @@ class Product extends Model
         'product_sold'
     ];
     public $timestamps = false;
+
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
+
     public function brand()
     {
         return $this->belongsTo(Brand::class, 'brand_id');
     }
+
     public function orderDetails()
     {
         return $this->hasMany(OrderDetails::class, 'product_id');
     }
+
     public function orders()
     {
         return $this->belongsToMany(

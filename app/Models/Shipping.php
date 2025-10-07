@@ -13,12 +13,12 @@ class Shipping extends Model
         'shipping_address',
         'shipping_phone',
         'shipping_email',
-        'shipping_note',
-        'shipping_method'
+        'shipping_note'
     ];
     public $timestamps = false;
+    
     public function order()
     {
-        return $this->hasMany(Order::class, 'shipping_id');
+        return $this->hasOne(Order::class, 'shipping_id', 'shipping_id');
     }
 }
