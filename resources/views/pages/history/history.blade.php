@@ -1,5 +1,5 @@
-@extends('admin_layout')
-@section('admin_content')
+@extends('index')
+@section('content')
     <div class="table-agile-info">
         <div class="panel panel-default">
             <?php
@@ -10,9 +10,6 @@
             } ?>
             <div class="panel-heading">
                 Liệt kê đơn hàng
-            </div>
-            <div class="row w3-res-tb">
-
             </div>
             <div class="table-responsive">
                 <table class="table table-striped b-t b-light">
@@ -29,7 +26,7 @@
                         @php
                             $i = 0;
                         @endphp
-                        @foreach ($order as $key => $ord)
+                        @foreach ($orders as $key => $ord)
                             @php
                                 $i++;
                             @endphp
@@ -49,16 +46,16 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ URL::to('/view-order/' . $ord->order_id) }}" class="active styling-edit"
-                                        ui-toggle-class="">
-                                        <i class="fa fa-eye text-success text-active"></i>
+                                    <a href="{{ URL::to('/view-history-order/' . $ord->order_id) }}"
+                                        class="active styling-edit" ui-toggle-class="">Xem đơn hàng
                                     </a>
-                                    <br>
-                                    <a onclick="return confirm('Bạn có chắc là muốn xóa danh mục này không?')"
-                                        href="{{ URL::to('/delete-order/' . $ord->order_id) }}" class="active styling-edit"
-                                        ui-toggle-class="">
-                                        <i class="fa fa-times text-danger text"></i>
-                                    </a>
+                                    @if ($ord->order_status == 1)
+                                        <a onclick="return confirm('Bạn có chắc là muốn hủy đơn hàng này không?')"
+                                            href="{{ URL::to('/cancel-order/' . $ord->order_id) }}"
+                                            class="active styling-edit" style="color:red; margin-left: 10px;">
+                                            Hủy đơn
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

@@ -106,6 +106,9 @@ Route::get('/manage-order', [OrderController::class, 'manage_order']);
 Route::get('/view-order/{orderId}', [OrderController::class, 'view_order']);
 Route::get('/delete-order/{orderId}', [OrderController::class, 'delete_order']);
 Route::post('/update-order-quantity-status', [OrderController::class, 'update_order_quantity_status']);
+Route::get('/history', [OrderController::class, 'history']);
+Route::get('/view-history-order/{orderId}', [OrderController::class, 'view_history_order']);
+Route::get('/cancel-order/{order_id}', [OrderController::class, 'cancel_order']);
 
 //Delivery
 Route::get('/delivery', [DeliveryController::class, 'delivery']);
@@ -113,3 +116,5 @@ Route::post('/select-delivery', [DeliveryController::class, 'select_delivery']);
 Route::post('/insert-delivery', [DeliveryController::class, 'insert_delivery']);
 Route::post('/select-feeship', [DeliveryController::class, 'select_feeship']);
 Route::post('/update-delivery', [DeliveryController::class, 'update_delivery']);
+
+Route::get('/all-customer', [AdminController::class, 'all_customer']);

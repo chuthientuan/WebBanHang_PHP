@@ -287,8 +287,6 @@ class CheckoutController extends Controller
                 $order_details = new OrderDetails();
                 $order_details->order_id = $order_id;
                 $order_details->product_id = $cart['product_id'];
-                $order_details->product_name = $cart['product_name'];
-                $order_details->product_price = $cart['product_price'];
                 $order_details->product_sales_quantity = $cart['product_qty'];
                 $order_details->product_coupon = $data['order_coupon'];
                 $order_details->product_feeship = $data['order_fee'];

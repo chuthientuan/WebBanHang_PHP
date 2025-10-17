@@ -1,9 +1,9 @@
-@extends('admin_layout')
-@section('admin_content')
+@extends('index')
+@section('content')
     <div class="table-agile-info">
         <div class="panel panel-default">
             <div class="panel-heading">
-                Thông tin khách hàng
+                Chi tiết đơn hàng đã đặt
             </div>
             <div class="table-responsive">
                 <table class="table table-striped b-t b-light">
@@ -64,7 +64,7 @@
         </div>
     </div>
     <br><br>
-    <div class="table-agile-info">
+    <div class="table-agile-info" style="width: max-content;">
         <div class="panel panel-default">
             <div class="panel-heading">
                 Liệt kê chi tiết đơn hàng
@@ -147,27 +147,6 @@
 
                                 Phí ship : {{ number_format($pro->product_feeship, 0, ',', '.') }}đ</br>
                                 Thanh toán: {{ number_format($total_coupon, 0, ',', '.') }}d
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="6">
-                                <form>
-                                    @csrf
-                                    <select class="form-control order_details" data-order-id="{{ $order->order_id }}">
-                                        <option value="1" {{ $order->order_status == 1 ? 'selected' : '' }}>
-                                            Đang chờ xử lý
-                                        </option>
-                                        <option value="2" {{ $order->order_status == 2 ? 'selected' : '' }}>
-                                            Đang giao hàng
-                                        </option>
-                                        <option value="3" {{ $order->order_status == 3 ? 'selected' : '' }}>
-                                            Đã giao hàng
-                                        </option>
-                                        <option value="4" {{ $order->order_status == 4 ? 'selected' : '' }}>
-                                            Hủy đơn hàng
-                                        </option>
-                                    </select>
-                                </form>
                             </td>
                         </tr>
                     </tbody>
