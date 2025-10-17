@@ -12,8 +12,8 @@
             </div>
             <div class="col-md-6">
                 <div class="card bg-success text-white p-3 shadow">
-                    <h4>Tổng đơn hàng</h4>
-                    <h2>{{ $totalOrders }}</h2>
+                    <h4 style="color: #fff">Tổng đơn hàng</h4>
+                    <h2 style="color: #fff">{{ $totalOrders }}</h2>
                 </div>
             </div>
         </div>
@@ -85,7 +85,7 @@
                 lineColors: ['#4e73df'],
                 hideHover: 'auto',
                 resize: true,
-                parseTime: false, // ⚡ Bắt buộc nếu xkey không phải là date
+                parseTime: false,
                 gridTextSize: 12,
                 xLabelAngle: 0,
                 xLabelFormat: function(x) {
@@ -95,6 +95,13 @@
                     return y.toLocaleString('vi-VN') + ' ₫';
                 }
             });
+            setTimeout(() => {
+                document.querySelectorAll('#revenue-morris-chart text').forEach(el => {
+                    el.style.fill = '#000000'; // đổi màu chữ
+                    el.style.fontWeight = '600'; // đậm
+                    el.style.fontSize = '12px';
+                });
+            }, 200);
         });
     </script>
 @endsection

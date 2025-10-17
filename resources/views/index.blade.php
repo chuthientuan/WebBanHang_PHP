@@ -119,6 +119,13 @@
                                 <li><a href="{{ URL::to('/gio-hang') }}"><i class="fa fa-shopping-cart"></i>Giỏ
                                         hàng</a></li>
 
+                                @if (Session::has('customer_id'))
+                                    <li>
+                                        <a href="{{ URL::to('/history') }}">
+                                            <i class="fa fa-bell"></i> Lịch sử đơn hàng
+                                        </a>
+                                    </li>
+                                @endif
 
                                 <?php
                                     $customer_id = Session::get('customer_id');

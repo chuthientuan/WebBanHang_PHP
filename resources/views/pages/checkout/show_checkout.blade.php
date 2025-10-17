@@ -196,83 +196,85 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="bill-to">
-                            <div class="form-one">
-                                <p>Tính phí vận chuyển</p>
-                                <form>
-                                    @csrf()
-                                    <div class="form-group">
-                                        <label for="exampleInputPassword1">Chọn thành phố </label>
-                                        <select name="city" id="city"
-                                            class="form-control input-sm m-bot15 choose city">
-                                            <option value="">----Chọn tỉnh thành phố----</option>
-                                            @foreach ($city as $key => $ci)
-                                                <option value="{{ $ci->matp }}">{{ $ci->name_city }}</option>
-                                            @endforeach
-                                        </select>
+                        <div class="checkout-container">
+                            <div class="bill-to">
+                                <div class="checkout-col fee-calculator-col">
+                                    <div class="form-one">
+                                        <p>Tính phí vận chuyển</p>
+                                        <form>
+                                            <div class="form-group">
+                                                <label>Chọn thành phố</label>
+                                                <select name="city" id="city"
+                                                    class="form-control input-sm m-bot15 choose city">
+                                                    <option value="">----Chọn tỉnh thành phố----</option>
+                                                    @foreach ($city as $key => $ci)
+                                                        <option value="{{ $ci->matp }}">{{ $ci->name_city }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>  
+                                            <div class="form-group">
+                                                <label>Chọn quận huyện</label>
+                                                <select name="province" id="province"
+                                                    class="form-control input-sm m-bot15 province choose">
+                                                    <option value="">----chọn quận huyện----</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Chọn xã phường</label>
+                                                <select name="wards" id="wards"
+                                                    class="form-control input-sm m-bot15 wards">
+                                                    <option value="">----chọn xã phường----</option>
+                                                </select>
+                                            </div>
+                                            <input type="button" value="Tính phí vận chuyển" name="calculate_order"
+                                                class="btn btn-primary btn-sm calculate_delivery">
+                                        </form>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputPassword1">Chọn quận huyện </label>
-                                        <select name="province" id="province"
-                                            class="form-control input-sm m-bot15  province choose">
-                                            <option value="">----chọn quận huyện----</option>
+                                </div>
+                                <div class="checkout-col shipping-info-col">
+                                    <div class="form-one">
+                                        <p>Điền thông tin gửi hàng</p>
+                                        <form>
+                                            @csrf()
+                                            <input type="text" name="shipping_name" class="shipping_name"
+                                                placeholder="Họ và tên">
+                                            <input type="text" name="shipping_address" class="shipping_address"
+                                                placeholder="Địa chỉ">
+                                            <input type="text" name="shipping_phone" class="shipping_phone"
+                                                placeholder="Số điện thoại">
+                                            <input type="text" name="shipping_email" class="shipping_email"
+                                                placeholder="Email">
+                                            <textarea name="shipping_note" class="shipping_note" placeholder="Ghi chú đơn hàng" rows="5"></textarea>
+                                            @if (Session::get('fee'))
+                                                <input type="hidden" name="order_fee" class="order_fee"
+                                                    value="{{ Session::get('fee') }}">
+                                            @else
+                                                <input type="hidden" name="order_fee" class="order_fee" value="10000">
+                                            @endif
+                                            @if (Session::get('coupon'))
+                                                @foreach (Session::get('coupon') as $key => $cou)
+                                                    <input type="hidden" name="order_coupon" class="order_coupon"
+                                                        value="{{ $cou['coupon_code'] }}">
+                                                @endforeach
+                                            @else
+                                                <input type="hidden" name="order_coupon" class="order_coupon"
+                                                    value="no">
+                                            @endif
 
-                                        </select>
+                                            <div class="form-group">
+                                                <label>Chọn hình thức thanh toán</label>
+                                                <select name="payment_select"
+                                                    class="form-control input-sm m-bot15 payment_select">
+                                                    <option value="0">Qua chuyển khoản</option>
+                                                    <option value="1">Tiền mặt</option>
+                                                </select>
+                                            </div>
+
+                                            <input type="button" value="Xác nhận đơn hàng" name="send_order"
+                                                class="btn btn-primary btn-sm send_order">
+                                        </form>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputPassword1">Chọn xã phường </label>
-                                        <select name="wards" id="wards" class="form-control input-sm m-bot15 wards">
-                                            <option value="">-- --chọn xã phường----</option>
-
-                                        </select>
-                                    </div>
-
-                                    <input type="button" value="Tính phí vận chuyển  " name="calculate_order"
-                                        class="btn btn-primary btn-sm
-                                    calculate_delivery">
-                                </form>
-                                <p>Điền thông tin gửi hàng </p>
-                                <form method="POST">
-                                    @csrf()
-                                    <input type="text" name="shipping_name" class="shipping_name"
-                                        placeholder="Họ và tên">
-                                    <input type="text" name="shipping_address" class="shipping_address"
-                                        placeholder="Địa chi">
-                                    <input type="text" name="shipping_phone" class="shipping_phone"
-                                        placeholder="Số điện thoại">
-                                    <input type="text" name="shipping_email" class="shipping_email"
-                                        placeholder="Email">
-                                    <textarea name="shipping_note" class="shipping_note" placeholder="Ghi chú đơn hàng " rows="16"></textarea>
-
-                                    @if (Session::get('fee'))
-                                        <input type="hidden" name="order_fee" class="order_fee"
-                                            value="{{ Session::get('fee') }}">
-                                    @else
-                                        <input type="hidden" name="order_fee" class="order_fee" value="10000">
-                                    @endif
-
-                                    @if (Session::get('coupon'))
-                                        @foreach (Session::get('coupon') as $key => $cou)
-                                            <input type="hidden" name="order_coupon" class="order_coupon"
-                                                value="{{ $cou['coupon_code'] }}">
-                                        @endforeach
-                                    @else
-                                        <input type="hidden" name="order_coupon" class="order_coupon" value="no">
-                                    @endif
-
-                                    <div class="">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Chọn hình thức thanh toán</label>
-                                            <select name="payment_select" id=""
-                                                class="form-control input-sm m-bot15  payment_select">
-                                                <option value="0">Qua chuyển khoản</option>
-                                                <option value="1">Tiền mặt</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <input type="button" value="Xác nhận đơn hàng " name="send_order"
-                                        class="btn btn-primary btn-sm send_order">
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>

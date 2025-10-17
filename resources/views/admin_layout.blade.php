@@ -138,6 +138,12 @@
                                 <span>Đơn hàng</span>
                             </a>
                         </li>
+                        <li>
+                            <a class="active" href="{{ URL::to('/all-customer') }}">
+                                <i class="fa fa-user"></i>
+                                <span>Người dùng</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <!-- sidebar menu end-->
