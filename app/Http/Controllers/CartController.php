@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Product;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 
@@ -14,50 +15,65 @@ class CartController extends Controller
     public function save_cart(Request $request)
     {
         $product_id = $request->productid_hidden;
-        $quantity = $request->qty;
+        $quantity = (int)$request->qty;
 
-        // Tìm thông tin sản phẩm trong database
         $product_info = Product::where('product_id', $product_id)->first();
 
-        // Lấy giỏ hàng hiện tại từ session, nếu chưa có thì tạo mảng rỗng
-        $cart = Session::get('cart', []);
-
         if ($product_info) {
+            // ================== BỔ SUNG LOGIC KIỂM TRA TỒN KHO ==================
+            if ($quantity > $product_info->product_quantity) {
+                // Nếu số lượng yêu cầu lớn hơn số lượng trong kho, trả về lỗi
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Số lượng bạn chọn vượt quá số lượng tồn kho (Chỉ còn ' . $product_info->product_quantity . ' sản phẩm).'
+                ], 400); // 400 Bad Request là một mã lỗi HTTP phù hợp
+            }
+            // ======================================================================
+
+            // Nếu số lượng hợp lệ, tiếp tục xử lý thêm vào giỏ hàng
+            $cart = Session::get('cart', []);
             $session_id = substr(md5(microtime()), rand(0, 26), 5);
 
-            // Tạo mảng dữ liệu cho sản phẩm với cấu trúc key CHUẨN
-            $cart_item = [
-                'session_id' => $session_id,
-                'product_id' => $product_info->product_id,
-                'product_name' => $product_info->product_name,
-                'product_image' => $product_info->product_image,
-                'product_price' => $product_info->product_price, // <- Key quan trọng nhất gây lỗi
-                'product_qty' => $quantity,
-            ];
+            // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa để cộng dồn
+            $existing_key = null;
+            foreach ($cart as $key => $item) {
+                if ($item['product_id'] == $product_id) {
+                    $existing_key = $key;
+                    break;
+                }
+            }
 
-            // Thêm sản phẩm vào giỏ hàng
-            // Chìa khóa của mảng là session_id để đảm bảo không bị trùng lặp
-            $cart[$session_id] = $cart_item;
+            if ($existing_key !== null) {
+                // Cộng dồn số lượng
+                $cart[$existing_key]['product_qty'] += $quantity;
+            } else {
+                // Thêm mới sản phẩm
+                $cart[$session_id] = [
+                    'session_id' => $session_id,
+                    'product_id' => $product_info->product_id,
+                    'product_name' => $product_info->product_name,
+                    'product_image' => $product_info->product_image,
+                    'product_price' => $product_info->product_price,
+                    'product_qty' => $quantity,
+                ];
+            }
 
-            // Lưu giỏ hàng mới vào session
             Session::put('cart', $cart);
             Session::save();
 
-            // Trả về response thành công cho AJAX
             return response()->json([
                 'status' => 'success',
                 'message' => 'Sản phẩm đã được thêm vào giỏ hàng!'
             ]);
         }
 
-        // Trả về response lỗi nếu không tìm thấy sản phẩm
         return response()->json(['status' => 'error', 'message' => 'Sản phẩm không tồn tại!'], 404);
     }
 
     public function show_cart()
     {
-        $cate_product = DB::table('tbl_category_product')->where('category_status', '1')->orderBy('category_id', 'desc')->get();
-        $brand_product = DB::table('tbl_brand')->where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
+        $cate_product = Category::where('category_status', '1')->orderBy('category_id', 'desc')->get();
+        $brand_product = Brand::where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
         return view('pages.cart.show_cart')->with('category', $cate_product)->with('brand', $brand_product);
     }
 
@@ -116,8 +132,8 @@ class CartController extends Controller
 
     public function gio_hang(Request $request)
     {
-        $cate_product = DB::table('tbl_category_product')->where('category_status', '1')->orderBy('category_id', 'desc')->get();
-        $brand_product = DB::table('tbl_brand')->where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
+        $cate_product = Category::where('category_status', '1')->orderBy('category_id', 'desc')->get();
+        $brand_product = Brand::where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
         return view('pages.cart.cart_ajax')->with('category', $cate_product)->with('brand', $brand_product);
     }
 

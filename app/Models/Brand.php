@@ -14,6 +14,7 @@ class Brand extends Model
         'brand_status'
     ];
     public $timestamps = false;
+    
     public function products()
     {
         return $this->hasMany(Product::class, 'brand_id');

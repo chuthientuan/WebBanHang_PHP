@@ -49,6 +49,7 @@ class DeliveryController extends Controller
         $fee_ship->fee_feeship = $data['fee_ship'];
         $fee_ship->save();
     }
+
     public function select_feeship()
     {
         $feeship = Feeship::orderby('fee_id', 'DESC')->get();
@@ -77,6 +78,7 @@ class DeliveryController extends Controller
         $output .= '</tbody></table></div>';
         echo $output;
     }
+
     public function update_delivery(Request $request)
     {
         $data = $request->all();

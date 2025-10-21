@@ -119,6 +119,13 @@
                                 <li><a href="{{ URL::to('/gio-hang') }}"><i class="fa fa-shopping-cart"></i>Giỏ
                                         hàng</a></li>
 
+                                @if (Session::has('customer_id'))
+                                    <li>
+                                        <a href="{{ URL::to('/history') }}">
+                                            <i class="fa fa-bell"></i> Lịch sử đơn hàng
+                                        </a>
+                                    </li>
+                                @endif
 
                                 <?php
                                     $customer_id = Session::get('customer_id');
@@ -159,7 +166,11 @@
                                 <li><a href="{{ URL::to('/trang-chu') }}" class="active">Trang chủ</a></li>
                                 <li class="dropdown"><a href="#">Sản phẩm<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
-                                        <li><a href="shop.html">Products</a></li>
+                                        @foreach ($category as $key => $cate)
+                                            <li><a
+                                                    href="{{ URL::to('/danh-muc-san-pham/' . $cate->category_id) }}">{{ $cate->category_name }}</a>
+                                            </li>
+                                        @endforeach
                                     </ul>
                                 </li>
                                 <li class="dropdown"><a href="#">Tin tức<i class="fa fa-angle-down"></i></a>
@@ -380,7 +391,7 @@
                 var shipping_phone = $('.shipping_phone').val();
                 var shipping_email = $('.shipping_email').val();
                 var shipping_note = $('.shipping_note').val();
-                var shipping_method = $('.payment_select').val();
+                var payment_method = $('.payment_select').val();
                 var order_fee = $('.order_fee').val();
                 var order_coupon = $('.order_coupon').val();
                 var _token = $('input[name="_token"]').val();
@@ -409,7 +420,7 @@
                                 shipping_phone: shipping_phone,
                                 shipping_email: shipping_email,
                                 shipping_note: shipping_note,
-                                shipping_method: shipping_method,
+                                payment_method: payment_method,
                                 order_fee: order_fee,
                                 order_coupon: order_coupon,
                                 _token: _token

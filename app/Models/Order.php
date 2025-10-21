@@ -17,22 +17,27 @@ class Order extends Model
         'created_at'
     ];
     public $timestamps = false;
+
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');
     }
+
     public function shipping()
     {
         return $this->belongsTo(Shipping::class, 'shipping_id');
     }
+
     public function payment()
     {
         return $this->belongsTo(Payment::class, 'payment_id');
     }
+
     public function orderDetails()
     {
         return $this->hasMany(OrderDetails::class, 'order_id');
     }
+
     public function products()
     {
         return $this->belongsToMany(

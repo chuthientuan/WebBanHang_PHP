@@ -6,7 +6,6 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\City;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
@@ -116,36 +115,39 @@ class CheckoutController extends Controller
     public function order_place(Request $request)
     {
         //Insert payment method
-        $data = array();
-        $data['payment_method'] = $request->payment_option;
-        $data['payment_status'] = 'Đang chờ xử lý';
-        $payment_id = DB::table('tbl_payment')->insertGetId($data);
+        $payment_data = [
+            'payment_method' => $request->payment_option
+        ];
+        $payment = Payment::create($payment_data);
 
         //Insert order
-        $order_data = array();
-        $order_data['customer_id'] = Session::get('customer_id');
-        $order_data['shipping_id'] = Session::get('shipping_id');
-        $order_data['payment_id'] = $payment_id;
-        $order_data['order_total'] = Cart::total();
-        $order_data['order_status'] = 'Đang chờ xử lý';
-        $order_id = DB::table('tbl_order')->insertGetId($order_data);
-
+        $order_data = [
+            'customer_id' => Session::get('customer_id'),
+            'shipping_id' => Session::get('shipping_id'),
+            'payment_id' => $payment->payment_id,
+            'order_total' => Cart::total(),
+            'order_status' => 'Đang chờ xử lý'
+        ];
+        $order = Order::create($order_data);
         //Insert order details
         $content = Cart::content();
         foreach ($content as $v_content) {
-            $order_d_data['order_id'] = $order_id;
-            $order_d_data['product_id'] = $v_content->id;
-            $order_d_data['product_name'] = $v_content->name;
-            $order_d_data['product_price'] = $v_content->price;
-            $order_d_data['product_sales_quantity'] = $v_content->qty;
-            DB::table('tbl_order_details')->insertGetId($order_d_data);
+            $order_details_data = [
+                'order_id' => $order->order_id,
+                'product_id' => $v_content->id,
+                'product_name' => $v_content->name,
+                'product_price' => $v_content->price,
+                'product_sales_quantity' => $v_content->qty,
+            ];
+            OrderDetails::create($order_details_data);
         }
-        if ($data['payment_method'] == 1) {
+
+        if ($payment_data['payment_method'] == 1) {
             echo 'Thanh toán thẻ ATM';
-        } elseif ($data['payment_method'] == 2) {
+        } elseif ($payment_data['payment_method'] == 2) {
             Cart::destroy();
-            $cate_product = DB::table('tbl_category_product')->where('category_status', '1')->orderBy('category_id', 'desc')->get();
-            $brand_product = DB::table('tbl_brand')->where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
+            $cate_product = Category::where('category_status', '1')->orderBy('category_id', 'desc')->get();
+            $brand_product = Brand::where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
             return view('pages.checkout.handcash')->with('category', $cate_product)->with('brand', $brand_product);
         } else {
             echo 'Thẻ ghi nợ';
@@ -167,7 +169,7 @@ class CheckoutController extends Controller
         $email = $request->email_account;
         $password = md5($request->password_account);
 
-        $result = DB::table('tbl_customer')->where('customer_email', $email)->where('customer_password', $password)->first();
+        $result = Customer::where('customer_email', $email)->where('customer_password', $password)->first();
         if ($result) {
             Session::put('customer_id', $result->customer_id);
             return Redirect::to('/trang-chu');
@@ -185,7 +187,7 @@ class CheckoutController extends Controller
         $email = $request->email_account;
         $password = md5($request->password_account);
 
-        $result = DB::table('tbl_customer')->where('customer_email', $email)->where('customer_password', $password)->first();
+        $result = Customer::where('customer_email', $email)->where('customer_password', $password)->first();
         if ($result) {
             Session::put('customer_id', $result->customer_id);
             return Redirect::to('/checkout');
@@ -197,12 +199,8 @@ class CheckoutController extends Controller
     public function manage_order()
     {
         $this->AuthLogin();
-        $all_order = DB::table('tbl_order')
-            ->join('tbl_customer', 'tbl_order.customer_id', '=', 'tbl_customer.customer_id')
-            ->select('tbl_order.*', 'tbl_customer.customer_name')
-            ->orderBy('tbl_order.order_id', 'desc')->get();
-        $manager_order = view('admin.manage_order')->with('all_order', $all_order);
-        return view('admin_layout')->with('admin.manage_order', $manager_order);
+        $all_order = Order::with('customer')->orderBy('order_id', 'desc')->get();
+        return view('admin.manage_order')->with('all_order', $all_order);
     }
 
     public function select_delivery_home(Request $request)
@@ -263,14 +261,12 @@ class CheckoutController extends Controller
         $shipping->shipping_phone = $data['shipping_phone'];
         $shipping->shipping_address = $data['shipping_address'];
         $shipping->shipping_note = $data['shipping_note'];
-        $shipping->shipping_method = $data['shipping_method'];
         $shipping->save();
 
         $shipping_id = $shipping->shipping_id;
 
         $payment = new Payment();
-        $payment->payment_method = $data['shipping_method'];
-        $payment->payment_status = 'Đang chờ xử lý';
+        $payment->payment_method = $data['payment_method'];
         $payment->save();
         $payment_id = $payment->payment_id;
 
@@ -291,8 +287,6 @@ class CheckoutController extends Controller
                 $order_details = new OrderDetails();
                 $order_details->order_id = $order_id;
                 $order_details->product_id = $cart['product_id'];
-                $order_details->product_name = $cart['product_name'];
-                $order_details->product_price = $cart['product_price'];
                 $order_details->product_sales_quantity = $cart['product_qty'];
                 $order_details->product_coupon = $data['order_coupon'];
                 $order_details->product_feeship = $data['order_fee'];

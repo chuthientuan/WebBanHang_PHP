@@ -15,6 +15,7 @@ class Customer extends Model
         'customer_phone'
     ];
     public $timestamps = false;
+    
     public function order()
     {
         return $this->hasMany(Order::class, 'customer_id');
