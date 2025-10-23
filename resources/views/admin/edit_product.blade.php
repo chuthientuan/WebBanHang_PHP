@@ -13,6 +13,15 @@
                         echo '<span class="text-alert">' . $message . '</span>';
                         session()->forget('message');
                     } ?>
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <div class="position-center">
                         @foreach ($edit_product as $key => $pro)
                             <form role="form" action="{{ URL::to('/update-product/' . $pro->product_id) }}" method="post"
@@ -58,7 +67,8 @@
                                     <select name="product_cate" class="form-control input-sm m-bot15">
                                         @foreach ($cate_product as $key => $cate)
                                             @if ($cate->category_id == $pro->category_id)
-                                                <option selected value="{{ $cate->category_id }}">{{ $cate->category_name }}
+                                                <option selected value="{{ $cate->category_id }}">
+                                                    {{ $cate->category_name }}
                                                 </option>
                                             @else
                                                 <option value="{{ $cate->category_id }}">{{ $cate->category_name }}

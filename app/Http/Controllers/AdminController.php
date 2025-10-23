@@ -28,52 +28,73 @@ class AdminController extends Controller
         return view('admin_login');
     }
 
-    public function show_dashboard()
+    public function show_dashboard(Request $request)
     {
         $this->AuthLogin();
-        $orders = Order::with('orderDetails')
-            ->where('order_status', 3)
-            ->get();
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
 
-        // ✅ Tính tổng doanh thu (qua quan hệ orderDetails)
+        $ordersQuery = Order::with('orderDetails.product')
+            ->where('order_status', 3);
+
+        if ($start_date && $end_date) {
+            $startDateFormatted = Carbon::parse($start_date)->startOfDay();
+            $endDateFormatted = Carbon::parse($end_date)->endOfDay();
+
+            $ordersQuery->whereBetween('created_at', [$startDateFormatted, $endDateFormatted]);
+        }
+
+        $orders = $ordersQuery->get();
         $totalRevenue = $orders->sum(function ($order) {
             return $order->orderDetails->sum(function ($detail) {
-                return $detail->product->product_price * $detail->product_sales_quantity;
+                return ($detail->product ? $detail->product->product_price : 0) * $detail->product_sales_quantity;
             });
         });
 
-        // 📦 Tổng số đơn hàng đã giao
         $totalOrders = $orders->count();
 
-        // 🔥 Top 5 sản phẩm bán chạy (dựa vào chi tiết các đơn đã giao)
         $topProducts = collect();
         foreach ($orders as $order) {
             foreach ($order->orderDetails as $detail) {
-                $topProducts->push([
-                    'name' => $detail->product->product_name,
-                    'quantity' => $detail->product_sales_quantity,
-                ]);
+                if ($detail->product) {
+                    $topProducts->push([
+                        'name' => $detail->product->product_name,
+                        'quantity' => $detail->product_sales_quantity,
+                    ]);
+                }
             }
         }
-
         $topProducts = $topProducts
             ->groupBy('name')
             ->map(fn($items) => $items->sum('quantity'))
             ->sortDesc()
             ->take(5);
 
-        // 📈 Doanh thu theo tháng (dựa theo created_at trong bảng tbl_order)
         $monthlyRevenue = $orders
             ->groupBy(fn($order) => Carbon::parse($order->created_at)->format('n'))
+            ->sortKeys()
             ->map(function ($monthlyOrders) {
                 return $monthlyOrders->sum(function ($order) {
                     return $order->orderDetails->sum(function ($detail) {
-                        return $detail->product->product_price * $detail->product_sales_quantity;
+                        return ($detail->product ? $detail->product->product_price : 0) * $detail->product_sales_quantity;
                     });
                 });
             });
 
-        return view('admin.dashboard', compact('totalRevenue', 'totalOrders', 'topProducts', 'monthlyRevenue'));
+        $chartMonthlyRevenue = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $chartMonthlyRevenue[$m] = $monthlyRevenue->get($m, 0);
+        }
+
+        // Pass the selected dates back to the view
+        return view('admin.dashboard', compact(
+            'totalRevenue',
+            'totalOrders',
+            'topProducts',
+            'chartMonthlyRevenue',
+            'start_date',
+            'end_date'
+        ));
     }
 
     public function dashboard(Request $request)

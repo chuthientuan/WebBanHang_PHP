@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Redirect;
 
 class ProductController extends Controller
@@ -41,26 +42,68 @@ class ProductController extends Controller
     public function save_product(Request $request)
     {
         $this->AuthLogin();
+        $validatedData = $request->validate(
+            [
+                'product_name' => 'required|string|max:255',
+                'product_price' => 'required|numeric|min:1',
+                'product_desc' => 'required|string',
+                'product_content' => 'required|string',
+                'product_cate' => [
+                    'required',
+                    'integer',
+                    Rule::exists('tbl_category_product', 'category_id')
+                ],
+                'product_brand' => [
+                    'required',
+                    'integer',
+                    Rule::exists('tbl_brand', 'brand_id')
+                ],
+                'product_quantity' => 'required|integer|min:1',
+                'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ],
+            [
+                'product_name.required' => 'Tên sản phẩm không được để trống.',
+                'product_price.required' => 'Giá sản phẩm không được để trống.',
+                'product_price.numeric' => 'Giá sản phẩm phải là một số.',
+                'product_desc.required' => 'Mô tả sản phẩm không được để trống.',
+                'product_content.required' => 'Nội dung sản phẩm không được để trống.',
+                'product_cate.required' => 'Vui lòng chọn danh mục sản phẩm.',
+                'product_cate.exists' => 'Danh mục sản phẩm không hợp lệ.',
+                'product_brand.required' => 'Vui lòng chọn thương hiệu sản phẩm.',
+                'product_brand.exists' => 'Thương hiệu sản phẩm không hợp lệ.',
+                'product_quantity.required' => 'Số lượng sản phẩm không được để trống.',
+                'product_quantity.integer' => 'Số lượng sản phẩm phải là số nguyên.',
+                'product_image.image' => 'File tải lên phải là hình ảnh.',
+                'product_image.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif.',
+                'product_image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
+            ]
+        );
+
         $data = [
-            'product_name' => $request->product_name,
-            'product_price' => $request->product_price,
-            'product_desc' => $request->product_desc,
-            'product_content' => $request->product_content,
-            'category_id' => $request->product_cate,
-            'brand_id' => $request->product_brand,
-            'product_status' => $request->product_status,
-            'product_quantity' => $request->product_quantity,
+            'product_name' => $validatedData['product_name'],
+            'product_price' => $validatedData['product_price'],
+            'product_desc' => $validatedData['product_desc'],
+            'product_content' => $validatedData['product_content'],
+            'category_id' => $validatedData['product_cate'],
+            'brand_id' => $validatedData['product_brand'],
+            'product_status' => $validatedData['product_status'],
+            'product_quantity' => $validatedData['product_quantity'],
             'product_image' => '',
             'product_sold' => 0
         ];
         if ($request->hasFile('product_image')) {
-            $get_image = $request->file('product_image');
-            $new_image_name = time() . '_' . $get_image->getClientOriginalName();
-            $get_image->move(public_path('Uploads/product'), $new_image_name);
-
-            $data['product_image'] = $new_image_name;
+            if ($request->file('product_image')->isValid()) {
+                $get_image = $request->file('product_image');
+                $new_image_name = time() . '_' . $get_image->getClientOriginalName();
+                $get_image->move(public_path('Uploads/product'), $new_image_name);
+                $data['product_image'] = $new_image_name;
+            } else {
+                return Redirect::back()->withErrors(['product_image' => 'File hình ảnh không hợp lệ.'])->withInput();
+            }
         }
+
         Product::create($data);
+
         Session::put('message', 'Thêm sản phẩm thành công');
         return Redirect::to('all-product');
     }
@@ -111,30 +154,75 @@ class ProductController extends Controller
     public function update_product(Request $request, $product_id)
     {
         $this->AuthLogin();
+        $validatedData = $request->validate(
+            [
+                'product_name' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('tbl_product', 'product_name')->ignore($product_id, 'product_id')
+                ],
+                'product_price' => 'required|numeric|min:0',
+                'product_desc' => 'required|string',
+                'product_content' => 'required|string',
+                'product_cate' => [
+                    'required',
+                    'integer',
+                    Rule::exists('tbl_category_product', 'category_id')
+                ],
+                'product_brand' => [
+                    'required',
+                    'integer',
+                    Rule::exists('tbl_brand', 'brand_id')
+                ],
+                'product_status' => 'required|boolean',
+                'product_quantity' => 'required|integer|min:0',
+                'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ],
+            [
+                'product_name.required' => 'Tên sản phẩm không được để trống.',
+                'product_name.unique' => 'Tên sản phẩm này đã tồn tại.', 
+                'product_price.required' => 'Giá sản phẩm không được để trống.',
+                'product_price.numeric' => 'Giá sản phẩm phải là một số.',
+                'product_desc.required' => 'Mô tả sản phẩm không được để trống.',
+                'product_content.required' => 'Nội dung sản phẩm không được để trống.',
+                'product_cate.required' => 'Vui lòng chọn danh mục sản phẩm.',
+                'product_cate.exists' => 'Danh mục sản phẩm không hợp lệ.',
+                'product_brand.required' => 'Vui lòng chọn thương hiệu sản phẩm.',
+                'product_brand.exists' => 'Thương hiệu sản phẩm không hợp lệ.',
+                'product_quantity.required' => 'Số lượng sản phẩm không được để trống.',
+                'product_quantity.integer' => 'Số lượng sản phẩm phải là số nguyên.',
+                'product_image.image' => 'File tải lên phải là hình ảnh.',
+                'product_image.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif.',
+                'product_image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
+            ]
+        );
+
         $data = [
-            'product_name' => $request->product_name,
-            'product_price' => $request->product_price,
-            'product_desc' => $request->product_desc,
-            'product_content' => $request->product_content,
-            'category_id' => $request->product_cate,
-            'brand_id' => $request->product_brand,
-            'product_status' => $request->product_status,
-            'product_quantity' => $request->product_quantity,
+            'product_name' => $validatedData['product_name'],
+            'product_price' => $validatedData['product_price'],
+            'product_desc' => $validatedData['product_desc'],
+            'product_content' => $validatedData['product_content'],
+            'category_id' => $validatedData['product_cate'],
+            'brand_id' => $validatedData['product_brand'],
+            'product_status' => $validatedData['product_status'],
+            'product_quantity' => $validatedData['product_quantity'],
         ];
 
-        $get_image = $request->file('product_image');
-        if ($get_image) {
-            $get_name_image = $get_image->getClientOriginalName();
-            $name_image = current(explode('.', $get_name_image));
-            $new_image = $name_image . rand(0, 99) . '.' . $get_image->getClientOriginalExtension();
-            // Note: The original path 'public/Uploads/product' is relative to the public directory.
-            $get_image->move('public/Uploads/product', $new_image);
-            $data['product_image'] = $new_image;
+        if ($request->hasFile('product_image')) {
+            if ($request->file('product_image')->isValid()) {
+                $get_image = $request->file('product_image');
+
+                $new_image_name = time() . '_' . $get_image->getClientOriginalName();
+                $get_image->move(public_path('Uploads/product'), $new_image_name);
+
+                $data['product_image'] = $new_image_name;
+
+            } else {
+                return Redirect::back()->withErrors(['product_image' => 'File hình ảnh không hợp lệ.'])->withInput();
+            }
         }
-
-        // Use Eloquent Model for update
         Product::where('product_id', $product_id)->update($data);
-
         Session::put('message', 'Cập nhật sản phẩm thành công');
         return Redirect::to('all-product');
     }

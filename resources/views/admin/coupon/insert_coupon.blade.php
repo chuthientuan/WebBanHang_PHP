@@ -22,7 +22,10 @@
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputPassword1">Mã giảm giá</label>
-                                <textarea class="form-control" name="coupon_code" id="exampleInputPassword1"></textarea>
+                                <input type="text" name="display_coupon_code" class="form-control" id="generatedCode"
+                                    value="{{ $generated_code }}" readonly
+                                    style="background-color: #eee; cursor: not-allowed;">
+                                <input type="hidden" name="generated_coupon_code" value="{{ $generated_code }}">
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputPassword1">Số lượng mã</label>

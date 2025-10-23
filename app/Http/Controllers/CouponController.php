@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Coupon;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Str;
 
 class CouponController extends Controller
 {
@@ -43,9 +44,14 @@ class CouponController extends Controller
         }
     }
 
-    public function insert_coupon(Request $request)
+    public function insert_coupon()
     {
-        return view('admin.coupon.insert_coupon');
+        $generated_code = strtoupper(Str::random(8));
+        while (Coupon::where('coupon_code', $generated_code)->exists()) {
+            $generated_code = strtoupper(Str::random(8));
+        }
+
+        return view('admin.coupon.insert_coupon')->with('generated_code', $generated_code);
     }
 
     public function insert_coupon_code(Request $request)
@@ -53,7 +59,7 @@ class CouponController extends Controller
         $data = $request->all();
         $coupon = new Coupon;
         $coupon->coupon_name = $data['coupon_name'];
-        $coupon->coupon_code = $data['coupon_code'];
+        $coupon->coupon_code = $data['generated_coupon_code'];
         $coupon->coupon_time = $data['coupon_time'];
         $coupon->coupon_condition = $data['coupon_condition'];
         $coupon->coupon_number = $data['coupon_number'];
