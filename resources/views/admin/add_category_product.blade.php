@@ -13,6 +13,15 @@
                         echo '<span class="text-alert">' . $message . '</span>';
                         session()->forget('message');
                     } ?>
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <div class="position-center">
                         <form role="form" action="{{ URL::to('/save-category-product') }}" method="post">
                             {{ csrf_field() }}

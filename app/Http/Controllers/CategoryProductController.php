@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rule;
 
 class CategoryProductController extends Controller
 {
@@ -29,19 +30,29 @@ class CategoryProductController extends Controller
     public function all_category_product()
     {
         $this->AuthLogin();
-        $all_category_product = Category::get();
-        $manager_category_product = view('admin.all_category_product')->with('all_category_product', $all_category_product);
-        return view('admin_layout')->with('admin.all_category_product', $manager_category_product);
+        $all_category_product = Category::orderBy('category_id', 'desc')->get();
+        return view('admin.all_category_product')->with('all_category_product', $all_category_product);
     }
 
     public function save_category_product(Request $request)
     {
         $this->AuthLogin();
-        $category = new Category();
-        $category->category_name = $request->category_product_name;
-        $category->category_desc = $request->category_product_desc;
-        $category->category_status = $request->category_product_status;
-        $category->save();
+        $validatedData = $request->validate([
+            'category_product_name' => 'required|string|max:255|unique:tbl_category_product,category_name',
+            'category_product_desc' => 'required|string',
+            'category_product_status' => 'required|boolean',
+        ], [
+            'category_product_name.required' => 'Tên danh mục không được để trống.',
+            'category_product_name.unique' => 'Tên danh mục này đã tồn tại.',
+            'category_product_desc.required' => 'Mô tả danh mục không được để trống.',
+        ]);
+
+        Category::create([
+            'category_name' => $validatedData['category_product_name'],
+            'category_desc' => $validatedData['category_product_desc'],
+            'category_status' => $validatedData['category_product_status'],
+        ]);
+
         Session::put('message', 'Thêm danh mục sản phẩm thành công');
         return Redirect::to('/add-category-product');
     }
@@ -77,22 +88,34 @@ class CategoryProductController extends Controller
     public function edit_category_product($category_product_id)
     {
         $this->AuthLogin();
-        $edit_category_product = Category::find($category_product_id);
+        $edit_category_product = Category::findOrFail($category_product_id);
         return view('admin.edit_category_product')->with('edit_category_product', $edit_category_product);
     }
 
     public function update_category_product(Request $request, $category_product_id)
     {
         $this->AuthLogin();
-        $category = Category::find($category_product_id);
-        if ($category) {
-            $category->category_name = $request->category_product_name;
-            $category->category_desc = $request->category_product_desc;
-            $category->save();
-            Session::put('message', 'Cập nhật danh mục sản phẩm thành công');
-        } else {
-            Session::put('message', 'Cập nhật danh mục thất bại');
-        }
+        $validatedData = $request->validate([
+            'category_product_name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('tbl_category_product', 'category_name')->ignore($category_product_id, 'category_id'),
+            ],
+            'category_product_desc' => 'required|string',
+        ], [
+            'category_product_name.required' => 'Tên danh mục không được để trống.',
+            'category_product_name.unique' => 'Tên danh mục này đã tồn tại.',
+            'category_product_desc.required' => 'Mô tả danh mục không được để trống.',
+        ]);
+
+        $category = Category::findOrFail($category_product_id);
+        $category->update([
+            'category_name' => $validatedData['category_product_name'],
+            'category_desc' => $validatedData['category_product_desc'],
+        ]);
+
+        Session::put('message', 'Cập nhật danh mục sản phẩm thành công');
         return Redirect::to('/all-category-product');
     }
 

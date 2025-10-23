@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rule;
 
 class BrandProductController extends Controller
 {
@@ -29,21 +30,29 @@ class BrandProductController extends Controller
     public function all_brand_product()
     {
         $this->AuthLogin();
-        // $all_brand_product = DB::table('tbl_brand')->get();
-        $all_brand_product = Brand::all();
-        $manager_brand_product = view('admin.all_brand_product')->with('all_brand_product', $all_brand_product);
-        return view('admin_layout')->with('admin.all_brand_product', $manager_brand_product);
+        $all_brand_product = Brand::orderBy('brand_id', 'desc')->get();
+        return view('admin.all_brand_product')->with('all_brand_product', $all_brand_product);
     }
 
     public function save_brand_product(Request $request)
     {
         $this->AuthLogin();
-        $brand = new Brand();
-        $brand->brand_name = $request->brand_product_name;
-        $brand->brand_desc = $request->brand_product_desc;
-        $brand->brand_status = $request->brand_product_status;
-        $brand->save();
-        Session::put('message', 'Thêm thương hiệu  sản phẩm thành công');
+        $validatedData = $request->validate([
+            'brand_product_name' => 'required|string|max:255|unique:tbl_brand,brand_name',
+            'brand_product_desc' => 'required|string',
+            'brand_product_status' => 'required|boolean',
+        ], [
+            'brand_product_name.required' => 'Tên thương hiệu không được để trống.',
+            'brand_product_name.unique' => 'Tên thương hiệu này đã tồn tại.',
+            'brand_product_desc.required' => 'Mô tả thương hiệu không được để trống.',
+        ]);
+        Brand::create([
+            'brand_name' => $validatedData['brand_product_name'],
+            'brand_desc' => $validatedData['brand_product_desc'],
+            'brand_status' => $validatedData['brand_product_status'],
+        ]);
+
+        Session::put('message', 'Thêm thương hiệu sản phẩm thành công');
         return Redirect::to('add-brand-product');
     }
 
@@ -78,23 +87,34 @@ class BrandProductController extends Controller
     public function edit_brand_product($brand_product_id)
     {
         $this->AuthLogin();
-        $edit_brand_product = Brand::find($brand_product_id);
+        $edit_brand_product = Brand::findOrFail($brand_product_id);
         return view('admin.edit_brand_product')->with('edit_brand_product', $edit_brand_product);
     }
 
     public function update_brand_product(Request $request, $brand_product_id)
     {
         $this->AuthLogin();
-        $brand = Brand::find($brand_product_id);
-        if ($brand) {
-            $brand->brand_name = $request->brand_product_name;
-            $brand->brand_desc = $request->brand_product_desc;
-            $brand->save();
-            Session::put('message', 'Cập nhật thương hiệu sản phẩm thành công');
-        } else {
-            Session::put('message', 'Cập nhật thương hiệu thất bại');
-        }
+        $validatedData = $request->validate([
+            'brand_product_name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('tbl_brand', 'brand_name')->ignore($brand_product_id, 'brand_id'),
+            ],
+            'brand_product_desc' => 'required|string',
+        ], [
+            'brand_product_name.required' => 'Tên thương hiệu không được để trống.',
+            'brand_product_name.unique' => 'Tên thương hiệu này đã tồn tại.',
+            'brand_product_desc.required' => 'Mô tả thương hiệu không được để trống.',
+        ]);
 
+        $brand = Brand::findOrFail($brand_product_id);
+        $brand->update([
+            'brand_name' => $validatedData['brand_product_name'],
+            'brand_desc' => $validatedData['brand_product_desc'],
+        ]);
+
+        Session::put('message', 'Cập nhật thương hiệu sản phẩm thành công');
         return Redirect::to('/all-brand-product');
     }
 

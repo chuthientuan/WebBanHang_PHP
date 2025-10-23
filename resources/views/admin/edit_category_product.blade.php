@@ -7,7 +7,6 @@
                     Cập Nhật Danh Mục Sản Phẩm
                 </header>
                 <div class="panel-body">
-
                     <?php
                     $message = session('message');
                     if ($message) {
@@ -15,6 +14,15 @@
                         session()->forget('message');
                     }
                     ?>
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <div class="position-center">
                         <form role="form"
                             action="{{ URL::to('/update-category-product/' . $edit_category_product->category_id) }}"
