@@ -270,13 +270,16 @@ class CheckoutController extends Controller
         $payment->save();
         $payment_id = $payment->payment_id;
 
-        $order_code = substr(md5(microtime()), rand(0, 26), 5);
         $order = new Order();
         $order->customer_id = Session::get('customer_id');
         $order->shipping_id = $shipping_id;
         $order->payment_id = $payment_id;
         $order->order_status = 1;
-        $order->order_code = $order_code;
+        if (isset($data['order_code'])) {
+            $order->order_code = $data['order_code']; // Lấy code từ QR
+        } else {
+            $order->order_code = substr(md5(microtime()), rand(0, 26), 5); // Tạo code mới (cho tiền mặt)
+        }
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $order->created_at = now();
         $order->save();
@@ -293,9 +296,35 @@ class CheckoutController extends Controller
                 $order_details->save();
             }
         }
+        Cart::destroy();
+        Session::forget(['coupon', 'fee', 'cart']);
 
-        Session::forget('coupon');
-        Session::forget('fee');
-        Session::forget('cart');
+        return response()->json([
+            'status' => 'success_saved',
+            'message' => 'Đã lưu đơn hàng thành công.'
+        ]);
+    }
+
+    public function generate_qr_code(Request $request)
+    {
+        try {
+            $finalAmount = Session::get('total');
+
+            // 2. Tạo mã đơn hàng (để gửi cho QR và lưu sau)
+            $order_code = substr(md5(microtime()), rand(0, 26), 5);
+
+            // 3. Tạo URL mã QR
+            $qrCodeUrl = 'https://api.vietqr.io/image/970436-0987654321-2P2t0j9.jpg?accountName=Test&amount=' . $finalAmount . '&addInfo=DH' . $order_code;
+
+            // 4. Trả về thông tin cho AJAX
+            return response()->json([
+                'status' => 'qr_generated',
+                'qr_data' => $qrCodeUrl,
+                'order_code' => $order_code,
+                'amount' => $finalAmount
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Lỗi khi tạo mã QR: ' . $e->getMessage()], 500);
+        }
     }
 }

@@ -100,6 +100,7 @@ Route::post('/select-delivery-home', [CheckoutController::class, 'select_deliver
 Route::post('/calculate-fee', [CheckoutController::class, 'calculate_fee']);
 Route::get('/del-fee', [CheckoutController::class, 'del_fee']);
 Route::post('/confirm-order', [CheckoutController::class, 'confirm_order']);
+Route::post('/generate-qr-code', [CheckoutController::class, 'generate_qr_code']);
 
 //Order
 Route::get('/manage-order', [OrderController::class, 'manage_order']);
