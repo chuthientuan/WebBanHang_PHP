@@ -86,7 +86,6 @@
                                             alt="" />
                                         <h2>{{ number_format($product->product_price) . ' ' . 'VNĐ' }}</h2>
                                         <p>{{ $product->product_name }}</p>
-
                                     </a>
                                     <button type="button" class="btn btn-default add-to-cart" name="add-to-cart"
                                         data-id="{{ $product->product_id }}"> Thêm vào giỏ hàng </button>

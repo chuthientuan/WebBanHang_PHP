@@ -13,12 +13,12 @@ class Product extends Model
         'brand_id',
         'product_name',
         'product_desc',
-        'product_content',
+        'product_import_price',
         'product_price',
         'product_image',
         'product_status',
-        'product_quantity',
-        'product_sold'
+        'product_slbd',
+        'product_quantity'
     ];
     public $timestamps = false;
 

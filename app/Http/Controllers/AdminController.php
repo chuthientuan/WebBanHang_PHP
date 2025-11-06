@@ -34,25 +34,43 @@ class AdminController extends Controller
         $start_date = $request->input('start_date');
         $end_date = $request->input('end_date');
 
-        $ordersQuery = Order::with('orderDetails.product')
+        // Lấy tất cả đơn hàng đã giao (status = 3)
+        $ordersQuery = Order::with('orderDetails.product') // Tải sẵn các quan hệ
             ->where('order_status', 3);
 
+        // Lọc theo ngày
         if ($start_date && $end_date) {
             $startDateFormatted = Carbon::parse($start_date)->startOfDay();
             $endDateFormatted = Carbon::parse($end_date)->endOfDay();
-
             $ordersQuery->whereBetween('created_at', [$startDateFormatted, $endDateFormatted]);
         }
 
         $orders = $ordersQuery->get();
+
+        // ✅ 1. Tính Tổng Doanh Thu (Doanh thu gộp - giữ nguyên logic của bạn)
         $totalRevenue = $orders->sum(function ($order) {
             return $order->orderDetails->sum(function ($detail) {
+                // Kiểm tra $detail->product có tồn tại không
                 return ($detail->product ? $detail->product->product_price : 0) * $detail->product_sales_quantity;
             });
         });
 
+        // ⭐ 2. TÍNH TOÁN MỚI: Tổng Lợi Nhuận (Lợi nhuận gộp)
+        $totalProfit = $orders->sum(function ($order) {
+            return $order->orderDetails->sum(function ($detail) {
+                // Chỉ tính lợi nhuận nếu sản phẩm còn tồn tại và có giá nhập
+                if ($detail->product && $detail->product->product_import_price > 0) {
+                    $profit_per_item = $detail->product->product_price - $detail->product->product_import_price;
+                    return $profit_per_item * $detail->product_sales_quantity;
+                }
+                return 0; // Bỏ qua nếu không có sản phẩm hoặc giá nhập
+            });
+        });
+
+        // 📦 3. Tổng số đơn hàng (Giữ nguyên)
         $totalOrders = $orders->count();
 
+        // 🔥 4. Top 5 sản phẩm bán chạy (Giữ nguyên)
         $topProducts = collect();
         foreach ($orders as $order) {
             foreach ($order->orderDetails as $detail) {
@@ -70,6 +88,7 @@ class AdminController extends Controller
             ->sortDesc()
             ->take(5);
 
+        // 📈 5. Doanh thu theo tháng (cho biểu đồ, giữ nguyên)
         $monthlyRevenue = $orders
             ->groupBy(fn($order) => Carbon::parse($order->created_at)->format('n'))
             ->sortKeys()
@@ -86,12 +105,36 @@ class AdminController extends Controller
             $chartMonthlyRevenue[$m] = $monthlyRevenue->get($m, 0);
         }
 
-        // Pass the selected dates back to the view
+        // ⭐ 6. TÍNH TOÁN MỚI: Lợi nhuận theo tháng (cho biểu đồ mới)
+        $monthlyProfit = $orders
+            ->groupBy(fn($order) => Carbon::parse($order->created_at)->format('n'))
+            ->sortKeys()
+            ->map(function ($monthlyOrders) {
+                return $monthlyOrders->sum(function ($order) {
+                    return $order->orderDetails->sum(function ($detail) {
+                        if ($detail->product && $detail->product->product_import_price > 0) {
+                            $profit_per_item = $detail->product->product_price - $detail->product->product_import_price;
+                            return $profit_per_item * $detail->product_sales_quantity;
+                        }
+                        return 0;
+                    });
+                });
+            });
+
+        $chartMonthlyProfit = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $chartMonthlyProfit[$m] = $monthlyProfit->get($m, 0);
+        }
+
+
+        // 7. Trả về view với các biến mới
         return view('admin.dashboard', compact(
             'totalRevenue',
+            'totalProfit',          // <-- Biến lợi nhuận mới
             'totalOrders',
             'topProducts',
             'chartMonthlyRevenue',
+            'chartMonthlyProfit',   // <-- Biến lợi nhuận tháng mới
             'start_date',
             'end_date'
         ));
