@@ -17,6 +17,7 @@ use App\Models\Payment;
 use App\Models\Shipping;
 use App\Models\Province;
 use App\Models\Ward;
+use Illuminate\Support\Facades\Hash;
 
 class CheckoutController extends Controller
 {
@@ -49,19 +50,21 @@ class CheckoutController extends Controller
         $request->validate([
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|unique:tbl_customer,customer_email',
-            'customer_phone' => 'required|string|max:15',
-            'customer_password' => 'required|string|min:8|confirmed' // Thêm 'confirmed'
+            'customer_phone' => 'required|string|digits:10',
+            'customer_password' => 'required|string|min:8|confirmed' // 'confirmed' sẽ tự động kiểm tra 'customer_password_confirmation'
         ], [
-            // Tùy chỉnh thông báo lỗi (tùy chọn)
             'customer_name.required' => 'Vui lòng nhập họ và tên.',
             'customer_email.required' => 'Vui lòng nhập địa chỉ email.',
             'customer_email.email' => 'Địa chỉ email không hợp lệ.',
-            'customer_email.unique' => 'Email này đã được sử dụng, vui lòng chọn một email khác.',
+            'customer_email.unique' => 'Email này đã được sử dụng.',
+            'customer_phone.required' => 'Vui lòng nhập số điện thoại.',
+            'customer_phone.digits' => 'Số điện thoại phải có đúng 10 ký tự.',
             'customer_password.required' => 'Vui lòng nhập mật khẩu.',
             'customer_password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
             'customer_password.confirmed' => 'Mật khẩu nhập lại không khớp.'
         ]);
-        $data = array();
+
+        $data = [];
         $data['customer_name'] = $request->customer_name;
         $data['customer_email'] = $request->customer_email;
         $data['customer_password'] = md5($request->customer_password);
@@ -70,7 +73,8 @@ class CheckoutController extends Controller
         $customer = Customer::create($data);
         Session::put('customer_id', $customer->customer_id);
         Session::put('customer_name', $customer->customer_name);
-        return Redirect::to('/checkout');
+
+        return Redirect::to('/checkout'); // Chuyển hướng đến trang thanh toán
     }
 
     public function checkout()
@@ -162,37 +166,63 @@ class CheckoutController extends Controller
 
     public function login(Request $request)
     {
+        // 1. Validation
         $request->validate([
             'email_account' => 'required|email',
             'password_account' => 'required'
+        ], [
+            'email_account.required' => 'Email không được để trống.',
+            'password_account.required' => 'Mật khẩu không được để trống.'
         ]);
-        $email = $request->email_account;
-        $password = md5($request->password_account);
 
-        $result = Customer::where('customer_email', $email)->where('customer_password', $password)->first();
-        if ($result) {
+        // 2. Xác thực (Đã cập nhật để dùng Hash)
+        $email = $request->email_account;
+        $password = $request->password_account; // Lấy mật khẩu gốc
+
+        $result = Customer::where('customer_email', $email)->first();
+
+        // Kiểm tra xem $result có tồn tại và mật khẩu có khớp không
+        if ($result && md5($password, $result->customer_password)) {
+            // Đăng nhập thành công
             Session::put('customer_id', $result->customer_id);
+            Session::put('customer_name', $result->customer_name);
             return Redirect::to('/trang-chu');
         } else {
-            return Redirect::to('/login-checkout')->with('error', 'Tài khoản hoặc mật khẩu không chính xác.');
+            // Đăng nhập thất bại
+            return Redirect::to('/login-home')
+                ->with('error', 'Tài khoản hoặc mật khẩu không chính xác.')
+                ->withInput($request->only('email_account')); // Giữ lại email đã nhập
         }
     }
 
     public function login_customer(Request $request)
     {
+        // 1. Validation
         $request->validate([
             'email_account' => 'required|email',
             'password_account' => 'required'
+        ], [
+            'email_account.required' => 'Email không được để trống.',
+            'password_account.required' => 'Mật khẩu không được để trống.'
         ]);
-        $email = $request->email_account;
-        $password = md5($request->password_account);
 
-        $result = Customer::where('customer_email', $email)->where('customer_password', $password)->first();
-        if ($result) {
+        // 2. Xác thực (Đã cập nhật để dùng Hash)
+        $email = $request->email_account;
+        $password = $request->password_account; // Lấy mật khẩu gốc
+
+        $result = Customer::where('customer_email', $email)->first();
+
+        // Kiểm tra xem $result có tồn tại và mật khẩu có khớp không
+        if ($result && md5($password, $result->customer_password)) {
+            // Đăng nhập thành công
             Session::put('customer_id', $result->customer_id);
+            Session::put('customer_name', $result->customer_name);
             return Redirect::to('/checkout');
         } else {
-            return Redirect::to('/login-checkout')->with('error', 'Tài khoản hoặc mật khẩu không chính xác.');
+            // Đăng nhập thất bại
+            return Redirect::to('/login-checkout')
+                ->with('error', 'Tài khoản hoặc mật khẩu không chính xác.')
+                ->withInput($request->only('email_account')); // Giữ lại email đã nhập
         }
     }
 

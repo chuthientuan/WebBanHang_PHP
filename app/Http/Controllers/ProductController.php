@@ -35,7 +35,7 @@ class ProductController extends Controller
         $this->AuthLogin();
         $all_product = Product::with('category', 'brand')
             ->orderBy('product_id', 'desc')
-            ->get();
+            ->paginate(10);
         return view('admin.all_product')->with('all_product', $all_product);
     }
 
@@ -45,9 +45,9 @@ class ProductController extends Controller
         $validatedData = $request->validate(
             [
                 'product_name' => 'required|string|max:255',
+                'product_import_price' => 'required|numeric|min:1',
                 'product_price' => 'required|numeric|min:1',
                 'product_desc' => 'required|string',
-                'product_content' => 'required|string',
                 'product_cate' => [
                     'required',
                     'integer',
@@ -58,21 +58,22 @@ class ProductController extends Controller
                     'integer',
                     Rule::exists('tbl_brand', 'brand_id')
                 ],
-                'product_quantity' => 'required|integer|min:1',
+                'product_slbd' => 'required|integer|min:1',
+                'product_status' => 'required|boolean',
                 'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ],
             [
                 'product_name.required' => 'Tên sản phẩm không được để trống.',
-                'product_price.required' => 'Giá sản phẩm không được để trống.',
-                'product_price.numeric' => 'Giá sản phẩm phải là một số.',
+                'product_import_price.required' => 'Giá nhập sản phẩm không được để trống.',
+                'product_import_price.numeric' => 'Giá nhập sản phẩm phải là một số.',
+                'product_price' => '',
                 'product_desc.required' => 'Mô tả sản phẩm không được để trống.',
-                'product_content.required' => 'Nội dung sản phẩm không được để trống.',
                 'product_cate.required' => 'Vui lòng chọn danh mục sản phẩm.',
                 'product_cate.exists' => 'Danh mục sản phẩm không hợp lệ.',
                 'product_brand.required' => 'Vui lòng chọn thương hiệu sản phẩm.',
                 'product_brand.exists' => 'Thương hiệu sản phẩm không hợp lệ.',
-                'product_quantity.required' => 'Số lượng sản phẩm không được để trống.',
-                'product_quantity.integer' => 'Số lượng sản phẩm phải là số nguyên.',
+                'product_slbd.required' => 'Số lượng sản phẩm không được để trống.',
+                'product_slbd.integer' => 'Số lượng sản phẩm phải là số nguyên.',
                 'product_image.image' => 'File tải lên phải là hình ảnh.',
                 'product_image.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif.',
                 'product_image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
@@ -81,15 +82,15 @@ class ProductController extends Controller
 
         $data = [
             'product_name' => $validatedData['product_name'],
+            'product_import_price' => $validatedData['product_import_price'],
             'product_price' => $validatedData['product_price'],
             'product_desc' => $validatedData['product_desc'],
-            'product_content' => $validatedData['product_content'],
             'category_id' => $validatedData['product_cate'],
             'brand_id' => $validatedData['product_brand'],
             'product_status' => $validatedData['product_status'],
-            'product_quantity' => $validatedData['product_quantity'],
-            'product_image' => '',
-            'product_sold' => 0
+            'product_slbd' => $validatedData['product_slbd'],
+            'product_quantity' => $validatedData['product_slbd'],
+            'product_image' => ''
         ];
         if ($request->hasFile('product_image')) {
             if ($request->file('product_image')->isValid()) {
@@ -164,7 +165,6 @@ class ProductController extends Controller
                 ],
                 'product_price' => 'required|numeric|min:0',
                 'product_desc' => 'required|string',
-                'product_content' => 'required|string',
                 'product_cate' => [
                     'required',
                     'integer',

@@ -38,13 +38,24 @@
         </div>
 
         <div class="row text-center mb-4" style="margin-top: 20px">
-            <div class="col-md-6">
+            {{-- Thẻ Doanh thu --}}
+            <div class="col-md-4">
                 <div class="card bg-primary text-white p-3 shadow">
                     <h4>Tổng doanh thu</h4>
                     <h2>{{ number_format($totalRevenue, 0, ',', '.') }} VNĐ</h2>
                 </div>
             </div>
-            <div class="col-md-6">
+
+            {{-- === THẺ LỢI NHUẬN MỚI === --}}
+            <div class="col-md-4">
+                <div class="card bg-warning text-white p-3 shadow">
+                    <h4>Tổng lợi nhuận</h4>
+                    <h2>{{ number_format($totalProfit, 0, ',', '.') }} VNĐ</h2>
+                </div>
+            </div>
+
+            {{-- Thẻ Đơn hàng --}}
+            <div class="col-md-4">
                 <div class="card bg-success text-white p-3 shadow">
                     <h4 style="color: #fff">Tổng đơn hàng</h4>
                     <h2 style="color: #fff">{{ $totalOrders }}</h2>
@@ -141,7 +152,7 @@
             } else {
                 $('#revenue-morris-chart').html(
                     '<p class="text-center text-muted">Không có dữ liệu doanh thu cho khoảng thời gian này.</p>'
-                    );
+                );
             }
 
             // Style adjustments (optional)

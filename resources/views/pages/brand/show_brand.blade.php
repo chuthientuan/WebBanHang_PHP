@@ -8,6 +8,61 @@
 @section('content')
     <div class="features_items"><!--features_items-->
         <h2 class="title text-center">{{ $brand_name }}</h2>
+        <div class="row" style="margin-bottom: 20px; padding: 0 15px;">
+            <div class="col-sm-12">
+                <form method="GET" action="{{ URL::current() }}" class="form-inline pull-right">
+                    <label style="margin-right: 10px;">Lọc theo giá:</label>
+                    <div class="form-group" style="margin-right: 10px;">
+                        <select name="price_range" class="form-control" onchange="this.form.submit()">
+                            <option value="">Tất cả mức giá</option>
+                            <option value="0-10000000"
+                                {{ ($selected_price_range ?? '') == '0-10000000' ? 'selected' : '' }}>
+                                Dưới 10 triệu
+                            </option>
+                            <option value="10000000-15000000"
+                                {{ ($selected_price_range ?? '') == '10000000-15000000' ? 'selected' : '' }}>
+                                Từ 10 - 15 triệu
+                            </option>
+                            <option value="15000000-20000000"
+                                {{ ($selected_price_range ?? '') == '15000000-20000000' ? 'selected' : '' }}>
+                                Từ 15 - 20 triệu
+                            </option>
+                            <option value="20000000-25000000"
+                                {{ ($selected_price_range ?? '') == '20000000-25000000' ? 'selected' : '' }}>
+                                Từ 20 - 25 triệu
+                            </option>
+                            <option value="25000000" {{ ($selected_price_range ?? '') == '25000000' ? 'selected' : '' }}>
+                                Trên 25 triệu
+                            </option>
+                        </select>
+                    </div>
+                    {{-- Nút Reset không còn cần thiết nếu dùng onchange --}}
+                    <a href="{{ URL::current() }}" class="btn btn-secondary" style="margin-left: 5px;">Reset</a>
+                </form>
+            </div>
+
+            @if (isset($selected_price_range) && $selected_price_range != '')
+                <div class="col-sm-12 text-info" style="margin-top: 10px;">
+                    @php
+                        $range_text = '';
+                        $parts = explode('-', $selected_price_range);
+                        if (count($parts) == 2) {
+                            if ($parts[0] == 0) {
+                                $range_text = 'dưới ' . number_format($parts[1]) . 'đ';
+                            } else {
+                                $range_text =
+                                    'từ ' . number_format($parts[0]) . 'đ đến ' . number_format($parts[1]) . 'đ';
+                            }
+                        } elseif (count($parts) == 1 && is_numeric($parts[0])) {
+                            $range_text = 'trên ' . number_format($parts[0]) . 'đ';
+                        }
+                    @endphp
+                    @if ($range_text)
+                        Đang lọc sản phẩm có giá {{ $range_text }}. <a href="{{ URL::current() }}">Bỏ lọc</a>
+                    @endif
+                </div>
+            @endif
+        </div>
         @foreach ($brand_by_id as $key => $product)
             <a href="{{ URL::to('/chi-tiet-san-pham/' . $product->product_id) }}">
                 <div class="col-sm-4">

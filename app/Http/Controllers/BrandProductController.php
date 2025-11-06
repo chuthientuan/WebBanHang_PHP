@@ -133,19 +133,45 @@ class BrandProductController extends Controller
     }
 
     //end function admin page
-    public function show_brand_home($brand_id)
+    public function show_brand_home(Request $request, $brand_id)
     {
         $cate_product = Category::where('category_status', '1')->orderBy('category_id', 'desc')->get();
         $brand_product = Brand::where('brand_status', '1')->orderBy('brand_id', 'desc')->get();
 
         $current_brand = Brand::findOrFail($brand_id);
 
-        $brand_by_id = $current_brand->products()->where('product_status', '1')->get();
+        $price_range = $request->input('price_range');
+        $min_price = null;
+        $max_price = null;
+
+        if ($price_range) {
+            $parts = explode('-', $price_range);
+            if (isset($parts[0]) && is_numeric($parts[0])) {
+                $min_price = (int)$parts[0];
+            }
+            if (isset($parts[1]) && is_numeric($parts[1])) {
+                $max_price = (int)$parts[1];
+            }
+        }
+
+        $productsQuery = $current_brand->products()->where('product_status', '1');
+
+        // Áp dụng bộ lọc giá
+        if ($min_price !== null && $max_price !== null) {
+            $productsQuery->whereBetween('product_price', [$min_price, $max_price]);
+        } elseif ($min_price !== null) { // Chỉ có giá tối thiểu (ví dụ: Trên 20 triệu)
+            $productsQuery->where('product_price', '>=', $min_price);
+        } elseif ($max_price !== null) { // Chỉ có giá tối đa (ví dụ: Dưới 10 triệu)
+            $productsQuery->where('product_price', '<=', $max_price);
+        }
+
+        $products_by_brand = $productsQuery->get();
 
         return view('pages.brand.show_brand')
             ->with('category', $cate_product)
             ->with('brand', $brand_product)
-            ->with('brand_by_id', $brand_by_id)
-            ->with('brand_name', $current_brand->brand_name);
+            ->with('brand_by_id', $products_by_brand)
+            ->with('brand_name', $current_brand->brand_name)
+            ->with('selected_price_range', $price_range);;
     }
 }

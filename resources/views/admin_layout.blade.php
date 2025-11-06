@@ -258,6 +258,9 @@
     <script>
         CKEDITOR.replace('ckeditor1');;
     </script>
+    <script>
+        CKEDITOR.replace('ckeditor2');;
+    </script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('.order_details').on('change', function() {
@@ -341,6 +344,7 @@
             });
         });
     </script>
+    @yield('scripts')
     <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/flot-chart/excanvas.min.js"></script><![endif]-->
     <script src="{{ asset('backend/js/jquery.scrollTo.js') }}"></script>
     <!-- morris JavaScript -->
