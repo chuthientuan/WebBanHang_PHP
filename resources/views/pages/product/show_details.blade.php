@@ -7,31 +7,7 @@
         <div class="col-sm-5">
             <div class="view-product">
                 <img src="{{ asset('public/Uploads/product/' . $product_details->product_image) }}" alt="" />
-                <h3>ZOOM</h3>
             </div>
-            <div id="similar-product" class="carousel slide" data-ride="carousel">
-
-                <!-- Wrapper for slides -->
-                <div class="carousel-inner">
-                    <div class="item active">
-                        <a href=""><img src="{{ asset('frontend/images/product-details/similar1.jpg') }}"
-                                alt=""></a>
-                        <a href=""><img src="{{ asset('frontend/images/product-details/similar2.jpg') }}"
-                                alt=""></a>
-                        <a href=""><img src="{{ asset('frontend/images/product-details/similar3.jpg') }}"
-                                alt=""></a>
-                    </div>
-                </div>
-
-                <!-- Controls -->
-                <a class="left item-control" href="#similar-product" data-slide="prev">
-                    <i class="fa fa-angle-left"></i>
-                </a>
-                <a class="right item-control" href="#similar-product" data-slide="next">
-                    <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-
         </div>
         <div class="col-sm-7">
             <div class="product-information"><!--/product-information-->
@@ -69,17 +45,12 @@
         <div class="col-sm-12">
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#details" data-toggle="tab">Mô tả sản phẩm </a></li>
-                <li><a href="#companyprofile" data-toggle="tab">Chi tiết sản phẩm </a></li>
                 <li><a href="#reviews" data-toggle="tab">Đánh giá</a></li>
             </ul>
         </div>
         <div class="tab-content">
             <div class="tab-pane fade active in" id="details">
                 <p>{!! $product_details->product_desc !!}</p>
-            </div>
-
-            <div class="tab-pane fade" id="companyprofile">
-                <p>{!! $product_details->product_content !!}</p>
             </div>
 
             <div class="tab-pane fade" id="reviews">
@@ -119,19 +90,32 @@
         <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
                 <div class="item active">
-
                     @foreach ($relate as $key => $lienquan)
                         <div class="col-sm-4">
                             <div class="product-image-wrapper">
                                 <div class="single-products">
                                     <div class="productinfo text-center">
-                                        <img src="{{ URL::to('public/Uploads/product/' . $lienquan->product_image) }}"
-                                            alt="" />
-                                        <h2>{{ number_format($lienquan->product_price) . ' ' . 'VNĐ' }}</h2>
-                                        <p>{{ $lienquan->product_name }}</p>
-                                        <a href="#" class="btn btn-default add-to-cart"><i
-                                                class="fa fa-shopping-cart"></i>
-                                            Thêm vào giỏ hàng</a>
+                                        <form action="">
+                                            @csrf
+                                            <input type="hidden" name="" value="{{ $lienquan->product_id }}"
+                                                class="cart_product_id_{{ $lienquan->product_id }}">
+                                            <input type="hidden" name="" value="{{ $lienquan->product_name }}"
+                                                class="cart_product_name_{{ $lienquan->product_id }}">
+                                            <input type="hidden" name="" value="{{ $lienquan->product_image }}"
+                                                class="cart_product_image_{{ $lienquan->product_id }}">
+                                            <input type="hidden" name="" value="{{ $lienquan->product_price }}"
+                                                class="cart_product_price_{{ $lienquan->product_id }}">
+                                            <input type="hidden" name="" value="1"
+                                                class="cart_product_qty_{{ $lienquan->product_id }}">
+                                            <a href="{{ URL::to('/chi-tiet-san-pham/' . $lienquan->product_id) }}">
+                                                <img src="{{ URL::to('public/Uploads/product/' . $lienquan->product_image) }}"
+                                                    alt="" />
+                                                <h2>{{ number_format($lienquan->product_price) . ' ' . 'VNĐ' }}</h2>
+                                                <p>{{ $lienquan->product_name }}</p>
+                                            </a>
+                                            <button type="button" class="btn btn-default add-to-cart" name="add-to-cart"
+                                                data-id="{{ $lienquan->product_id }}"> Thêm vào giỏ hàng </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

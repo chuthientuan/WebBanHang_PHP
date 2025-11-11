@@ -17,6 +17,7 @@ use App\Models\Payment;
 use App\Models\Shipping;
 use App\Models\Province;
 use App\Models\Ward;
+use Illuminate\Support\Facades\Hash;
 
 class CheckoutController extends Controller
 {
@@ -49,19 +50,21 @@ class CheckoutController extends Controller
         $request->validate([
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|unique:tbl_customer,customer_email',
-            'customer_phone' => 'required|string|max:15',
-            'customer_password' => 'required|string|min:8|confirmed' // Thêm 'confirmed'
+            'customer_phone' => 'required|string|digits:10',
+            'customer_password' => 'required|string|min:8|confirmed' // 'confirmed' sẽ tự động kiểm tra 'customer_password_confirmation'
         ], [
-            // Tùy chỉnh thông báo lỗi (tùy chọn)
             'customer_name.required' => 'Vui lòng nhập họ và tên.',
             'customer_email.required' => 'Vui lòng nhập địa chỉ email.',
             'customer_email.email' => 'Địa chỉ email không hợp lệ.',
-            'customer_email.unique' => 'Email này đã được sử dụng, vui lòng chọn một email khác.',
+            'customer_email.unique' => 'Email này đã được sử dụng.',
+            'customer_phone.required' => 'Vui lòng nhập số điện thoại.',
+            'customer_phone.digits' => 'Số điện thoại phải có đúng 10 ký tự.',
             'customer_password.required' => 'Vui lòng nhập mật khẩu.',
             'customer_password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
             'customer_password.confirmed' => 'Mật khẩu nhập lại không khớp.'
         ]);
-        $data = array();
+
+        $data = [];
         $data['customer_name'] = $request->customer_name;
         $data['customer_email'] = $request->customer_email;
         $data['customer_password'] = md5($request->customer_password);
@@ -70,7 +73,8 @@ class CheckoutController extends Controller
         $customer = Customer::create($data);
         Session::put('customer_id', $customer->customer_id);
         Session::put('customer_name', $customer->customer_name);
-        return Redirect::to('/checkout');
+
+        return Redirect::to('/checkout'); // Chuyển hướng đến trang thanh toán
     }
 
     public function checkout()
@@ -162,37 +166,63 @@ class CheckoutController extends Controller
 
     public function login(Request $request)
     {
+        // 1. Validation
         $request->validate([
             'email_account' => 'required|email',
             'password_account' => 'required'
+        ], [
+            'email_account.required' => 'Email không được để trống.',
+            'password_account.required' => 'Mật khẩu không được để trống.'
         ]);
-        $email = $request->email_account;
-        $password = md5($request->password_account);
 
-        $result = Customer::where('customer_email', $email)->where('customer_password', $password)->first();
-        if ($result) {
+        // 2. Xác thực (Đã cập nhật để dùng Hash)
+        $email = $request->email_account;
+        $password = $request->password_account; // Lấy mật khẩu gốc
+
+        $result = Customer::where('customer_email', $email)->first();
+
+        // Kiểm tra xem $result có tồn tại và mật khẩu có khớp không
+        if ($result && md5($password, $result->customer_password)) {
+            // Đăng nhập thành công
             Session::put('customer_id', $result->customer_id);
+            Session::put('customer_name', $result->customer_name);
             return Redirect::to('/trang-chu');
         } else {
-            return Redirect::to('/login-checkout')->with('error', 'Tài khoản hoặc mật khẩu không chính xác.');
+            // Đăng nhập thất bại
+            return Redirect::to('/login-home')
+                ->with('error', 'Tài khoản hoặc mật khẩu không chính xác.')
+                ->withInput($request->only('email_account')); // Giữ lại email đã nhập
         }
     }
 
     public function login_customer(Request $request)
     {
+        // 1. Validation
         $request->validate([
             'email_account' => 'required|email',
             'password_account' => 'required'
+        ], [
+            'email_account.required' => 'Email không được để trống.',
+            'password_account.required' => 'Mật khẩu không được để trống.'
         ]);
-        $email = $request->email_account;
-        $password = md5($request->password_account);
 
-        $result = Customer::where('customer_email', $email)->where('customer_password', $password)->first();
-        if ($result) {
+        // 2. Xác thực (Đã cập nhật để dùng Hash)
+        $email = $request->email_account;
+        $password = $request->password_account; // Lấy mật khẩu gốc
+
+        $result = Customer::where('customer_email', $email)->first();
+
+        // Kiểm tra xem $result có tồn tại và mật khẩu có khớp không
+        if ($result && md5($password, $result->customer_password)) {
+            // Đăng nhập thành công
             Session::put('customer_id', $result->customer_id);
+            Session::put('customer_name', $result->customer_name);
             return Redirect::to('/checkout');
         } else {
-            return Redirect::to('/login-checkout')->with('error', 'Tài khoản hoặc mật khẩu không chính xác.');
+            // Đăng nhập thất bại
+            return Redirect::to('/login-checkout')
+                ->with('error', 'Tài khoản hoặc mật khẩu không chính xác.')
+                ->withInput($request->only('email_account')); // Giữ lại email đã nhập
         }
     }
 
@@ -270,13 +300,16 @@ class CheckoutController extends Controller
         $payment->save();
         $payment_id = $payment->payment_id;
 
-        $order_code = substr(md5(microtime()), rand(0, 26), 5);
         $order = new Order();
         $order->customer_id = Session::get('customer_id');
         $order->shipping_id = $shipping_id;
         $order->payment_id = $payment_id;
         $order->order_status = 1;
-        $order->order_code = $order_code;
+        if (isset($data['order_code'])) {
+            $order->order_code = $data['order_code']; // Lấy code từ QR
+        } else {
+            $order->order_code = substr(md5(microtime()), rand(0, 26), 5); // Tạo code mới (cho tiền mặt)
+        }
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $order->created_at = now();
         $order->save();
@@ -293,9 +326,35 @@ class CheckoutController extends Controller
                 $order_details->save();
             }
         }
+        Cart::destroy();
+        Session::forget(['coupon', 'fee', 'cart']);
 
-        Session::forget('coupon');
-        Session::forget('fee');
-        Session::forget('cart');
+        return response()->json([
+            'status' => 'success_saved',
+            'message' => 'Đã lưu đơn hàng thành công.'
+        ]);
+    }
+
+    public function generate_qr_code(Request $request)
+    {
+        try {
+            $finalAmount = Session::get('total');
+
+            // 2. Tạo mã đơn hàng (để gửi cho QR và lưu sau)
+            $order_code = substr(md5(microtime()), rand(0, 26), 5);
+
+            // 3. Tạo URL mã QR
+            $qrCodeUrl = 'https://api.vietqr.io/image/970436-0987654321-2P2t0j9.jpg?accountName=Test&amount=' . $finalAmount . '&addInfo=DH' . $order_code;
+
+            // 4. Trả về thông tin cho AJAX
+            return response()->json([
+                'status' => 'qr_generated',
+                'qr_data' => $qrCodeUrl,
+                'order_code' => $order_code,
+                'amount' => $finalAmount
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Lỗi khi tạo mã QR: ' . $e->getMessage()], 500);
+        }
     }
 }

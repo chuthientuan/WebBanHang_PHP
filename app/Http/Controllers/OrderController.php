@@ -112,7 +112,6 @@ class OrderController extends Controller
                 $quantity_sold = $quantities[$key];
 
                 $product->product_quantity -= $quantity_sold;
-                $product->product_sold += $quantity_sold;
                 $product->save();
             }
         }
@@ -124,7 +123,6 @@ class OrderController extends Controller
                 $quantity_sold = $quantities[$key];
 
                 $product->product_quantity += $quantity_sold;
-                $product->product_sold -= $quantity_sold;
                 $product->save();
             }
         }

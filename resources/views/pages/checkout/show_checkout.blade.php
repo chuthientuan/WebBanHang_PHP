@@ -132,7 +132,7 @@
                                                                 Phí vận chuyển :
                                                                 <span>{{ number_format(Session::get('fee'), 0, ',', '.') }}đ</span>
                                                                 <?php
-                                                                $total_after_fee = $total - Session::get('fee');
+                                                                $total_after_fee = $total + Session::get('fee');
                                                                 ?>
                                                             </li>
                                                         @endif
@@ -141,25 +141,29 @@
                                                                 if (Session::get('fee') && !Session::get('coupon')) {
                                                                     $total_after = $total_after_fee;
                                                                     echo number_format($total_after, 0, ',', '.') . 'đ';
+                                                                    Session::put('total', $total_after);
                                                                 } elseif (
                                                                     !Session::get('fee') &&
                                                                     Session::get('coupon')
                                                                 ) {
                                                                     $total_after = $total_after_coupon;
                                                                     echo number_format($total_after, 0, ',', '.') . 'đ';
+                                                                    Session::put('total', $total_after);
                                                                 } elseif (
                                                                     Session::get('fee') &&
                                                                     Session::get('coupon')
                                                                 ) {
                                                                     $total_after = $total_after_coupon;
-                                                                    $total_after = $total_after - Session::get('fee');
+                                                                    $total_after = $total_after + Session::get('fee');
                                                                     echo number_format($total_after, 0, ',', '.') . 'đ';
+                                                                    Session::put('total', $total_after);
                                                                 } elseif (
                                                                     !Session::get('fee') &&
                                                                     !Session::get('coupon')
                                                                 ) {
                                                                     $total_after = $total;
                                                                     echo number_format($total_after, 0, ',', '.') . 'đ';
+                                                                    Session::put('total', $total_after);
                                                                 }
                                                             @endphp </li>
                                                     </td>
@@ -211,7 +215,7 @@
                                                         <option value="{{ $ci->matp }}">{{ $ci->name_city }}</option>
                                                     @endforeach
                                                 </select>
-                                            </div>  
+                                            </div>
                                             <div class="form-group">
                                                 <label>Chọn quận huyện</label>
                                                 <select name="province" id="province"

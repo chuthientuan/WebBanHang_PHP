@@ -14,8 +14,16 @@
                         @endif
                         <form action="{{ URL::to('/login-customer') }}" method="POST">
                             {{ csrf_field() }}
-                            <input type="text" name="email_account" placeholder="Tài khoản" />
+                            <input type="email" name="email_account" placeholder="Tài khoản Email"
+                                value="{{ old('email_account') }}" />
+                            @error('email_account')
+                                <span class="text-danger" style="font-size: 14px;">{{ $message }}</span>
+                            @enderror
+
                             <input type="password" name="password_account" placeholder="Mật khẩu" />
+                            @error('password_account')
+                                <span class="text-danger" style="font-size: 14px;">{{ $message }}</span>
+                            @enderror
                             <span>
                                 <input type="checkbox" class="checkbox">
                                 Giữ đăng nhập
@@ -34,6 +42,9 @@
                             {{ csrf_field() }}
                             <input type="text" name="customer_name" placeholder="Họ và tên"
                                 value="{{ old('customer_name') }}" />
+                            @error('customer_name')
+                                <span class="text-danger" style="font-size: 14px;">{{ $message }}</span>
+                            @enderror
                             <input type="email" name="customer_email" placeholder="Địa chỉ email"
                                 value="{{ old('customer_email') }}" />
                             @error('customer_email')
@@ -48,6 +59,9 @@
                             <input type="password" name="customer_password_confirmation" placeholder="Nhập lại mật khẩu" />
                             <input type="text" name="customer_phone" placeholder="Số điện thoại"
                                 value="{{ old('customer_phone') }}" />
+                            @error('customer_phone')
+                                <span class="text-danger" style="font-size: 14px;">{{ $message }}</span>
+                            @enderror
                             <button type="submit" class="btn btn-default">Đăng ký</button>
                         </form>
                     </div><!--/sign up form-->

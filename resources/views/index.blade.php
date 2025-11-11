@@ -71,31 +71,6 @@
                             <a href="index.html"><img src="{{ asset('frontend/images/home/logo.png') }}"
                                     alt="" /></a>
                         </div>
-                        <div class="btn-group pull-right">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default dropdown-toggle usa"
-                                    data-toggle="dropdown">
-                                    USA
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">Canada</a></li>
-                                    <li><a href="#">UK</a></li>
-                                </ul>
-                            </div>
-
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default dropdown-toggle usa"
-                                    data-toggle="dropdown">
-                                    DOLLAR
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">Canadian Dollar</a></li>
-                                    <li><a href="#">Pound</a></li>
-                                </ul>
-                            </div>
-                        </div>
                     </div>
                     <div class="col-sm-8">
                         <div class="shop-menu pull-right">
@@ -173,7 +148,6 @@
                                         @endforeach
                                     </ul>
                                 </li>
-                                <li class="dropdown"><a href="#">Tin tức<i class="fa fa-angle-down"></i></a>
 
                                 </li>
                                 <li><a href="{{ URL::to('/gio-hang') }}">Giỏ hàng</a></li>
@@ -410,43 +384,141 @@
                 }).then((result) => {
                     // Kiểm tra xem người dùng có nhấn nút "confirm" không
                     if (result.isConfirmed) {
+                        if (payment_method == '1') {
+                            $.ajax({
+                                url: "{{ url('/confirm-order') }}",
+                                method: 'POST',
+                                data: {
+                                    shipping_name: shipping_name,
+                                    shipping_address: shipping_address,
+                                    shipping_phone: shipping_phone,
+                                    shipping_email: shipping_email,
+                                    shipping_note: shipping_note,
+                                    payment_method: payment_method,
+                                    order_fee: order_fee,
+                                    order_coupon: order_coupon,
+                                    _token: _token
+                                },
+                                success: function(response) {
+                                    if (response.status == 'success_saved') {
+                                        Swal.fire(
+                                            'Đã đặt hàng!',
+                                            'Đơn hàng của bạn đã được gửi thành công.',
+                                            'success'
+                                        ).then(() => {
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire('Lỗi!',
+                                            'Có lỗi xảy ra khi lưu đơn hàng.',
+                                            'error');
+                                    }
+                                },
+                                error: function() {
+                                    Swal.fire('Lỗi!', 'Không thể kết nối máy chủ.',
+                                        'error');
+                                }
+                            });
+                        } else {
+                            $.ajax({
+                                url: "{{ url('/generate-qr-code') }}", // Route MỚI: chỉ tạo QR
+                                method: 'POST',
+                                data: {
+                                    order_fee: order_fee,
+                                    order_coupon: order_coupon,
+                                    _token: _token
+                                },
+                                success: function(response) {
+                                    if (response.status == 'qr_generated') {
 
-                        $.ajax({
-                            url: "{{ url('/confirm-order') }}",
-                            method: 'POST',
-                            data: {
-                                shipping_name: shipping_name,
-                                shipping_address: shipping_address,
-                                shipping_phone: shipping_phone,
-                                shipping_email: shipping_email,
-                                shipping_note: shipping_note,
-                                payment_method: payment_method,
-                                order_fee: order_fee,
-                                order_coupon: order_coupon,
-                                _token: _token
-                            },
-                            success: function() {
-                                Swal.fire(
-                                    'Đã đặt hàng!',
-                                    'Đơn hàng của bạn đã được gửi thành công.',
-                                    'success'
-                                );
+                                        // BƯỚC 2.2: Hiển thị popup QR
+                                        Swal.fire({
+                                            title: 'Vui lòng quét mã QR',
+                                            html: `
+                                            <p>Quét mã QR để hoàn tất đơn hàng.</p>
+                                            <img src="${response.qr_data}" alt="Mã QR" style="width: 250px; height: 250px; margin: 15px auto; display: block;">
+                                            <p>Mã đơn hàng: <strong>${response.order_code}</strong></p>
+                                            <p style="color: #d33;">Số tiền: <strong>${Number(response.amount).toLocaleString('vi-VN')} đ</strong></p>
+                                        `,
+                                            icon: 'info',
+                                            confirmButtonText: 'Đã thanh toán / Hoàn tất',
+                                            showCancelButton: true,
+                                            cancelButtonText: 'Hủy đơn'
+                                        }).then((qrResult) => {
+                                            if (qrResult.isConfirmed) {
 
-                                // CHUYỂN location.reload VÀO ĐÂY
-                                // Chỉ tải lại trang sau khi đã nhận được phản hồi thành công từ server
-                                window.setTimeout(function() {
-                                    location.reload();
-                                }, 3000);
-                            },
-                            error: function() {
-                                Swal.fire(
-                                    'Lỗi!',
-                                    'Đã có lỗi xảy ra, vui lòng thử lại.',
-                                    'error'
-                                );
-                            }
-                        });
+                                                $.ajax({
+                                                    url: "{{ url('/confirm-order') }}", // Dùng lại route LƯU
+                                                    method: 'POST',
+                                                    data: {
+                                                        shipping_name: shipping_name,
+                                                        shipping_address: shipping_address,
+                                                        shipping_phone: shipping_phone,
+                                                        shipping_email: shipping_email,
+                                                        shipping_note: shipping_note,
+                                                        payment_method: payment_method,
+                                                        order_fee: order_fee,
+                                                        order_coupon: order_coupon,
+                                                        _token: _token,
+                                                        order_code: response
+                                                            .order_code
+                                                    },
+                                                    success: function(
+                                                        saveResponse
+                                                    ) {
+                                                        if (saveResponse
+                                                            .status ==
+                                                            'success_saved'
+                                                        ) {
+                                                            Swal.fire(
+                                                                    'Thành công!',
+                                                                    'Đã xác nhận thanh toán và lưu đơn hàng.',
+                                                                    'success'
+                                                                )
+                                                                .then(
+                                                                    () => {
+                                                                        location
+                                                                            .reload();
+                                                                    }
+                                                                );
+                                                        } else {
+                                                            Swal.fire(
+                                                                'Lỗi!',
+                                                                'Có lỗi xảy ra khi lưu đơn hàng.',
+                                                                'error'
+                                                            );
+                                                        }
+                                                    },
+                                                    error: function() {
+                                                        Swal.fire(
+                                                            'Lỗi!',
+                                                            'Không thể kết nối máy chủ để lưu.',
+                                                            'error'
+                                                        );
+                                                    }
+                                                }); // Kết thúc AJAX (2)
 
+                                            } else {
+                                                // Người dùng bấm "Hủy" trên popup QR
+                                                Swal.fire('Đã hủy',
+                                                    'Đơn hàng chưa được lưu.',
+                                                    'error');
+                                                // Không làm gì cả, giỏ hàng vẫn còn nguyên
+                                            }
+                                        }); // Kết thúc .then() của popup QR
+
+                                    } else {
+                                        Swal.fire('Lỗi!', 'Không thể tạo mã QR.',
+                                            'error');
+                                    }
+                                },
+                                error: function() {
+                                    Swal.fire('Lỗi!',
+                                        'Không thể kết nối máy chủ để tạo QR.',
+                                        'error');
+                                }
+                            });
+                        }
                     } else {
                         Swal.fire(
                             'Đã hủy',

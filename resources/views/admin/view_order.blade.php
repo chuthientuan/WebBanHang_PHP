@@ -132,7 +132,7 @@
                                         $total_after_coupon = ($total * $coupon_number) / 100;
                                         echo 'Tổng giảm : ' . number_format($total_after_coupon, 0, ',', '.') . '</br>';
                                         // Giữ nguyên logic trừ phí ship
-                                        $total_coupon = $total - $total_after_coupon - $pro->product_feeship;
+                                        $total_coupon = $total - $total_after_coupon + $pro->product_feeship;
                                     @endphp
                                 @else
                                     @php
@@ -141,7 +141,7 @@
                                             'k' .
                                             '</br>';
                                         // Sửa lỗi cú pháp: Thêm dấu trừ (-)
-                                        $total_coupon = $total - $coupon_number - $pro->product_feeship;
+                                        $total_coupon = $total - $coupon_number + $pro->product_feeship;
                                     @endphp
                                 @endif
 
