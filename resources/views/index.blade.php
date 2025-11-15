@@ -370,6 +370,20 @@
                 var order_coupon = $('.order_coupon').val();
                 var _token = $('input[name="_token"]').val();
 
+                $('.error-text').text('');
+
+                if (!shipping_name || !shipping_address || !shipping_phone || !shipping_email) {
+                    Swal.fire('Lỗi!', 'Vui lòng điền đầy đủ thông tin giao hàng.', 'error');
+                    // Hiển thị lỗi ngay lập tức
+                    if (!shipping_name) $('#error_shipping_name').text('Họ và tên không được để trống.');
+                    if (!shipping_address) $('#error_shipping_address').text(
+                        'Địa chỉ không được để trống.');
+                    if (!shipping_phone) $('#error_shipping_phone').text(
+                        'Số điện thoại không được để trống.');
+                    if (!shipping_email) $('#error_shipping_email').text('Email không được để trống.');
+                    return;
+                }
+
                 // Sử dụng cú pháp Swal.fire().then() của SweetAlert 2
                 Swal.fire({
                     toast: false,
@@ -414,9 +428,42 @@
                                             'error');
                                     }
                                 },
-                                error: function() {
-                                    Swal.fire('Lỗi!', 'Không thể kết nối máy chủ.',
-                                        'error');
+                                error: function(xhr) {
+                                    // 1. Kiểm tra nếu là lỗi validation (422)
+                                    if (xhr.status === 422) {
+                                        var errors = xhr.responseJSON.errors;
+                                        // Hiển thị thông báo lỗi chung
+                                        Swal.fire('Lỗi!',
+                                            'Dữ liệu không hợp lệ, vui lòng kiểm tra lại.',
+                                            'error');
+
+                                        // 2. Hiển thị từng lỗi bên dưới mỗi input
+                                        if (errors.shipping_name) {
+                                            $('#error_shipping_name').text(errors
+                                                .shipping_name[0]);
+                                        }
+                                        if (errors.shipping_address) {
+                                            $('#error_shipping_address').text(errors
+                                                .shipping_address[0]);
+                                        }
+                                        if (errors.shipping_phone) {
+                                            $('#error_shipping_phone').text(errors
+                                                .shipping_phone[0]);
+                                        }
+                                        if (errors.shipping_email) {
+                                            $('#error_shipping_email').text(errors
+                                                .shipping_email[0]);
+                                        }
+                                    } else {
+                                        // 2. Xử lý các lỗi khác (500, 404, ...)
+                                        var errorMsg =
+                                            'Có lỗi xảy ra, vui lòng thử lại.';
+                                        if (xhr.responseJSON && xhr.responseJSON
+                                            .message) {
+                                            errorMsg = xhr.responseJSON.message;
+                                        }
+                                        Swal.fire('Lỗi!', errorMsg, "error");
+                                    }
                                 }
                             });
                         } else {
@@ -694,8 +741,9 @@
             });
         });
     </script>
-
-
+    @yield('scripts1')
+    @yield('scripts2')
+    @yield('scripts3')
 </body>
 
 </html>
