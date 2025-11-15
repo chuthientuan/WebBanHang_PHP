@@ -50,9 +50,8 @@
                                         class="active styling-edit" ui-toggle-class="">Xem đơn hàng
                                     </a>
                                     @if ($ord->order_status == 1)
-                                        <a onclick="return confirm('Bạn có chắc là muốn hủy đơn hàng này không?')"
-                                            href="{{ URL::to('/cancel-order/' . $ord->order_id) }}"
-                                            class="active styling-edit" style="color:red; margin-left: 10px;">
+                                        <a href="{{ URL::to('/cancel-order/' . $ord->order_id) }}"
+                                            class="active styling-edit cancel-order" style="color:red; margin-left: 10px;">
                                             Hủy đơn
                                         </a>
                                     @endif
@@ -64,4 +63,33 @@
             </div>
         </div>
     </div>
+@endsection
+@section('scripts2')
+    {{-- Đảm bảo bạn đã tải jQuery và SweetAlert2 trong layout chính (index.blade.php) --}}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            $('.cancel-order').on('click', function(e) {
+                e.preventDefault(); // Ngăn chặn link chuyển trang ngay lập tức
+                var deleteUrl = $(this).attr('href'); // Lấy đường dẫn xóa
+
+                Swal.fire({
+                    title: 'Bạn có chắc không?',
+                    text: "Bạn xác nhận hủy đơn hàng này không?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xác nhận',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Nếu người dùng đồng ý, chuyển hướng đến link xóa
+                        window.location.href = deleteUrl;
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

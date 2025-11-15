@@ -12,7 +12,7 @@
                                 {{ session('error') }}
                             </div>
                         @endif
-                        <form action="{{ URL::to('/login-customer') }}" method="POST">
+                        <form action="{{ URL::to('/login') }}" method="POST">
                             {{ csrf_field() }}
                             <input type="email" name="email_account" placeholder="Tài khoản Email"
                                 value="{{ old('email_account') }}" />
