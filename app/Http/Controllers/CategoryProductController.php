@@ -166,7 +166,7 @@ class CategoryProductController extends Controller
             $productsQuery->where('product_price', '<=', $max_price);
         }
 
-        $products_by_category = $productsQuery->get();
+        $products_by_category = $productsQuery->paginate(6);
 
         return view('pages.category.show_category')
             ->with('category', $cate_product)

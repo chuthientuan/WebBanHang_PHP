@@ -38,7 +38,7 @@ class HomeController extends Controller
             $productsQuery->where('product_price', '<=', $max_price);
         }
 
-        $all_product = $productsQuery->orderBy('product_id', 'desc')->limit(50)->get();
+        $all_product = $productsQuery->orderBy('product_id', 'desc')->paginate(6);
 
         return view('pages.home')
             ->with('category', $cate_product)

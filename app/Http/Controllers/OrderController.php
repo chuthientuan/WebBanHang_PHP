@@ -23,11 +23,18 @@ class OrderController extends Controller
         }
     }
 
-    public function manage_order()
+    public function manage_order(Request $request)
     {
         $this->AuthLogin();
-        $order = Order::orderby('created_at', 'DESC')->get();
-        return view('admin.manage_order')->with(compact('order'));
+        $status = $request->input('status');
+        $ordersQuery = Order::with('customer')->orderBy('order_id', 'desc');
+        if ($status !== null && $status !== 'all') {
+            $ordersQuery->where('order_status', $status);
+        }
+        $all_order = $ordersQuery->paginate(10);
+        return view('admin.manage_order')
+            ->with('all_order', $all_order)
+            ->with('status', $status);
     }
 
     public function view_order($order_id)
