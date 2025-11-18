@@ -28,10 +28,6 @@
                                 <option value="4" {{ request()->input('status') == '4' ? 'selected' : '' }}>Đã hủy
                                 </option>
                             </select>
-                            {{-- Nút reset bộ lọc --}}
-                            <span class="input-group-btn">
-                                <a href="{{ URL::to('/manage-order') }}" class="btn btn-sm btn-default">Reset</a>
-                            </span>
                         </div>
                     </form>
                 </div>
