@@ -11,10 +11,28 @@
             <div class="panel-heading">
                 Liệt kê sản phẩm
             </div>
+            <div class="row w3-res-tb" style="margin-bottom: 10px; padding: 10px;">
+                <div class="col-sm-4">
+                    <form method="GET" action="{{ URL::to('/all-product') }}">
+                        <div class="input-group">
+                            <select name="cate_id" class="form-control" onchange="this.form.submit()">
+                                <option value="all">-- Tất cả danh mục --</option>
+                                @foreach ($cate_product as $key => $cate)
+                                    <option value="{{ $cate->category_id }}"
+                                        {{ request()->get('cate_id') == $cate->category_id ? 'selected' : '' }}>
+                                        {{ $cate->category_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-striped b-t b-light">
                     <thead>
                         <tr>
+                            <th>Thứ Tự</th>
                             <th>Tên Sản Phẩm </th>
                             <th>Giá Nhập</th>
                             <th>Giá Bán</th>
@@ -28,12 +46,21 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $i = 0;
+                        @endphp
                         @foreach ($all_product as $key => $pro)
+                            @php
+                                $i++;
+                            @endphp
                             <tr>
+                                <td>{{ $i }}</td>
                                 <td>{{ $pro->product_name }}</td>
                                 <td>{{ number_format($pro->product_import_price, 0, ',', '.') }} đ</td>
                                 <td>{{ number_format($pro->product_price, 0, ',', '.') }} đ</td>
-                                <td><img src="public/uploads/product/{{ $pro->product_image }}" height="100" width="100">
+                                <td>
+                                    <img src="{{ asset('public/Uploads/product/' . $pro->product_image) }}" height="100"
+                                        width="100">
                                 </td>
                                 <td>{{ $pro->product_slbd }}</td>
                                 <td>{{ $pro->product_quantity }}</td>
@@ -73,15 +100,14 @@
             <footer class="panel-footer">
                 <div class="row">
                     <div class="col-sm-5 text-center">
-                        {{-- Hiển thị thông tin số lượng sản phẩm --}}
                         <small class="text-muted inline m-t-sm m-b-sm">
                             Hiển thị {{ $all_product->firstItem() }} - {{ $all_product->lastItem() }} trên tổng số
                             {{ $all_product->total() }} sản phẩm
                         </small>
                     </div>
                     <div class="col-sm-7 text-right text-center-xs">
-                        {{-- Tự động hiển thị các nút phân trang --}}
-                        {!! $all_product->links() !!}
+                        {{-- QUAN TRỌNG: Thêm appends để giữ bộ lọc khi chuyển trang --}}
+                        {!! $all_product->appends(request()->all())->links() !!}
                     </div>
                 </div>
             </footer>

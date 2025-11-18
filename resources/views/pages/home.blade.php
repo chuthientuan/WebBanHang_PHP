@@ -100,4 +100,10 @@
             </div>
         @endforelse
     </div><!--features_items-->
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            {{-- appends(request()->all()) giúp giữ lại các tham số lọc khi chuyển trang --}}
+            {{ $all_product->appends(request()->all())->links() }}
+        </div>
+    </div>
 @endsection

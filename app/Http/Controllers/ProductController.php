@@ -30,13 +30,22 @@ class ProductController extends Controller
         return view('admin.add_product')->with('cate_product', $cate_product)->with('brand_product', $brand_product);
     }
 
-    public function all_product()
+    public function all_product(Request $request)
     {
         $this->AuthLogin();
-        $all_product = Product::with('category', 'brand')
-            ->orderBy('product_id', 'desc')
-            ->paginate(10);
-        return view('admin.all_product')->with('all_product', $all_product);
+        $cate_product = Category::orderBy('category_id', 'desc')->get();
+
+        $query = Product::with('category', 'brand')->orderBy('product_id', 'desc');
+
+        if ($request->cate_id && $request->cate_id != 'all') {
+            $query->where('category_id', $request->cate_id);
+        }
+
+        // 4. Thực hiện phân trang
+        $all_product = $query->paginate(10);
+        return view('admin.all_product')
+            ->with('all_product', $all_product)
+            ->with('cate_product', $cate_product);
     }
 
     public function save_product(Request $request)
@@ -96,7 +105,7 @@ class ProductController extends Controller
             if ($request->file('product_image')->isValid()) {
                 $get_image = $request->file('product_image');
                 $new_image_name = time() . '_' . $get_image->getClientOriginalName();
-                $get_image->move(public_path('Uploads/product'), $new_image_name);
+                $get_image->move(public_path('public/Uploads/product'), $new_image_name);
                 $data['product_image'] = $new_image_name;
             } else {
                 return Redirect::back()->withErrors(['product_image' => 'File hình ảnh không hợp lệ.'])->withInput();
@@ -181,11 +190,10 @@ class ProductController extends Controller
             ],
             [
                 'product_name.required' => 'Tên sản phẩm không được để trống.',
-                'product_name.unique' => 'Tên sản phẩm này đã tồn tại.', 
+                'product_name.unique' => 'Tên sản phẩm này đã tồn tại.',
                 'product_price.required' => 'Giá sản phẩm không được để trống.',
                 'product_price.numeric' => 'Giá sản phẩm phải là một số.',
                 'product_desc.required' => 'Mô tả sản phẩm không được để trống.',
-                'product_content.required' => 'Nội dung sản phẩm không được để trống.',
                 'product_cate.required' => 'Vui lòng chọn danh mục sản phẩm.',
                 'product_cate.exists' => 'Danh mục sản phẩm không hợp lệ.',
                 'product_brand.required' => 'Vui lòng chọn thương hiệu sản phẩm.',
@@ -202,7 +210,6 @@ class ProductController extends Controller
             'product_name' => $validatedData['product_name'],
             'product_price' => $validatedData['product_price'],
             'product_desc' => $validatedData['product_desc'],
-            'product_content' => $validatedData['product_content'],
             'category_id' => $validatedData['product_cate'],
             'brand_id' => $validatedData['product_brand'],
             'product_status' => $validatedData['product_status'],
@@ -214,10 +221,9 @@ class ProductController extends Controller
                 $get_image = $request->file('product_image');
 
                 $new_image_name = time() . '_' . $get_image->getClientOriginalName();
-                $get_image->move(public_path('Uploads/product'), $new_image_name);
+                $get_image->move(public_path('public/Uploads/product'), $new_image_name);
 
                 $data['product_image'] = $new_image_name;
-
             } else {
                 return Redirect::back()->withErrors(['product_image' => 'File hình ảnh không hợp lệ.'])->withInput();
             }
@@ -249,11 +255,13 @@ class ProductController extends Controller
             $category_id = $details_product->category_id;
         }
 
-        $related_product = collect();
+        $related_product = collect(3);
         if ($category_id) {
             $related_product = Product::with(['category', 'brand'])
                 ->where('category_id', $category_id)
                 ->where('product_id', '!=', $product_id)
+                ->inRandomOrder()                         // (Tùy chọn) Lấy ngẫu nhiên để thay đổi sản phẩm hiển thị
+                ->limit(3)
                 ->get();
         }
 

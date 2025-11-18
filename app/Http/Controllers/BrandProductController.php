@@ -165,7 +165,7 @@ class BrandProductController extends Controller
             $productsQuery->where('product_price', '<=', $max_price);
         }
 
-        $products_by_brand = $productsQuery->get();
+        $products_by_brand = $productsQuery->paginate(6);
 
         return view('pages.brand.show_brand')
             ->with('category', $cate_product)
