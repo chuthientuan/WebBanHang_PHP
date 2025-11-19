@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\City;
+use App\Models\Coupon;
 use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Session;
@@ -361,6 +362,15 @@ class CheckoutController extends Controller
                     $order_details->product_coupon = $data['order_coupon'];
                     $order_details->product_feeship = $data['order_fee'];
                     $order_details->save();
+                }
+            }
+            if ($data['order_coupon'] != 'no') {
+                $coupon = Coupon::where('coupon_code', $data['order_coupon'])->first();
+
+                // Nếu tìm thấy mã, trừ đi 1
+                if ($coupon) {
+                    $coupon->coupon_time = $coupon->coupon_time - 1;
+                    $coupon->save();
                 }
             }
             Cart::destroy();
