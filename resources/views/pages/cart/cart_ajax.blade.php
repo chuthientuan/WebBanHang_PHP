@@ -176,3 +176,56 @@
         </div>
     </section>
 @endsection
+@section('scripts1')
+    {{-- Đảm bảo bạn đã tải jQuery và SweetAlert2 trong layout chính (index.blade.php) --}}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            // --- 1. Xử lý sự kiện bấm nút XÓA 1 SẢN PHẨM (dấu X) ---
+            $('.cart_quantity_delete').on('click', function(e) {
+                e.preventDefault(); // Ngăn chặn link chuyển trang ngay lập tức
+                var deleteUrl = $(this).attr('href'); // Lấy đường dẫn xóa
+
+                Swal.fire({
+                    title: 'Bạn có chắc không?',
+                    text: "Bạn muốn xóa sản phẩm này khỏi giỏ hàng?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xóa',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Nếu người dùng đồng ý, chuyển hướng đến link xóa
+                        window.location.href = deleteUrl;
+                    }
+                });
+            });
+
+            // --- 2. Xử lý sự kiện bấm nút XÓA TẤT CẢ ---
+            $('a[href="{{ url('/del-all-product') }}"]').on('click', function(e) {
+                e.preventDefault(); // Ngăn chặn link chuyển trang ngay lập tức
+                var deleteAllUrl = $(this).attr('href'); // Lấy đường dẫn xóa tất cả
+
+                Swal.fire({
+                    title: 'Bạn có chắc không?',
+                    text: "Bạn muốn xóa TẤT CẢ sản phẩm khỏi giỏ hàng? Hành động này không thể hoàn tác!",
+                    icon: 'error', // Dùng icon đỏ cho hành động nguy hiểm
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xóa',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Nếu người dùng đồng ý, chuyển hướng đến link xóa
+                        window.location.href = deleteAllUrl;
+                    }
+                });
+            });
+
+        });
+    </script>
+@endsection

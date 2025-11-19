@@ -2449,3 +2449,54 @@ textarea {
 .form-one select {
     width: 100%;
 }
+
+.product-image-wrapper {
+    height: 450px; /* Chiều cao tổng thể cố định cho cả thẻ */
+    overflow: hidden; /* Ẩn những phần thừa ra ngoài */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.single-products {
+    height: 100%;
+}
+
+.productinfo {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.product-image-wrapper .single-products .productinfo img {
+    width: 100%;
+    height: 200px; /* Chiều cao ảnh cố định */
+    object-fit: contain; /* Giữ nguyên tỉ lệ ảnh, không bị méo */
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.productinfo p {
+    height: 45px; /* Chiều cao cố định cho khoảng 2 dòng chữ */
+    line-height: 22px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Giới hạn chỉ hiện 2 dòng */
+    -webkit-box-orient: vertical;
+    margin-bottom: 10px;
+    padding: 0 10px; /* Thêm khoảng cách 2 bên lề */
+}
+
+/* 4. Đẩy giá tiền và nút bấm xuống dưới cùng hoặc căn chỉnh */
+.productinfo h2 {
+    margin-top: auto; /* Đẩy giá tiền xuống nếu tên ngắn */
+    margin-bottom: 10px;
+}
+
+/* Đảm bảo link bao ngoài không phá vỡ layout */
+.productinfo form a {
+    display: block;
+    width: 100%;
+}

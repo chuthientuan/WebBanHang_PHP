@@ -98,4 +98,10 @@
             </a>
         @endforeach
     </div><!--features_items-->
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            {{-- appends(request()->all()) giúp giữ lại các tham số lọc khi chuyển trang --}}
+            {{ $brand_by_id->appends(request()->all())->links() }}
+        </div>
+    </div>
 @endsection

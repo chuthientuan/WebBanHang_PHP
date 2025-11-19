@@ -11,8 +11,26 @@
             <div class="panel-heading">
                 Liệt kê đơn hàng
             </div>
-            <div class="row w3-res-tb">
-
+            <div class="row w3-res-tb" style="margin-bottom: 10px; padding: 10px;">
+                <div class="col-sm-3 m-b-xs">
+                    {{-- Form lọc --}}
+                    <form method="GET" action="{{ URL::to('/manage-order') }}">
+                        <div class="input-group">
+                            <select name="status" class="input-sm form-control w-sm inline v-middle"
+                                onchange="this.form.submit()">
+                                <option value="all">-- Tất cả trạng thái --</option>
+                                <option value="1" {{ request()->input('status') == '1' ? 'selected' : '' }}>Đang chờ xử
+                                    lý</option>
+                                <option value="2" {{ request()->input('status') == '2' ? 'selected' : '' }}>Đang giao
+                                    hàng</option>
+                                <option value="3" {{ request()->input('status') == '3' ? 'selected' : '' }}>Đã giao
+                                    hàng</option>
+                                <option value="4" {{ request()->input('status') == '4' ? 'selected' : '' }}>Đã hủy
+                                </option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-striped b-t b-light">
@@ -29,7 +47,7 @@
                         @php
                             $i = 0;
                         @endphp
-                        @foreach ($order as $key => $ord)
+                        @foreach ($all_order as $key => $ord)
                             @php
                                 $i++;
                             @endphp
@@ -65,6 +83,20 @@
                     </tbody>
                 </table>
             </div>
+            <footer class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-5 text-center">
+                        <small class="text-muted inline m-t-sm m-b-sm">
+                            Hiển thị {{ $all_order->firstItem() }} - {{ $all_order->lastItem() }} trên tổng số
+                            {{ $all_order->total() }} đơn hàng
+                        </small>
+                    </div>
+                    <div class="col-sm-7 text-right text-center-xs">
+                        {{-- CẬP NHẬT: Thêm appends để giữ bộ lọc khi chuyển trang --}}
+                        {!! $all_order->appends(request()->all())->links() !!}
+                    </div>
+                </div>
+            </footer>
         </div>
     </div>
 @endsection

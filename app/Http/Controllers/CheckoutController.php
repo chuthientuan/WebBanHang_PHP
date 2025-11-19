@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\City;
+use App\Models\Coupon;
 use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Session;
@@ -18,6 +19,7 @@ use App\Models\Shipping;
 use App\Models\Province;
 use App\Models\Ward;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class CheckoutController extends Controller
 {
@@ -285,54 +287,102 @@ class CheckoutController extends Controller
     {
         $data = $request->all();
 
-        $shipping = new Shipping();
-        $shipping->shipping_name = $data['shipping_name'];
-        $shipping->shipping_email = $data['shipping_email'];
-        $shipping->shipping_phone = $data['shipping_phone'];
-        $shipping->shipping_address = $data['shipping_address'];
-        $shipping->shipping_note = $data['shipping_note'];
-        $shipping->save();
+        $rules = [
+            'shipping_name' => 'required|string|max:255',
+            'shipping_address' => 'required|string|max:255',
+            'shipping_phone' => 'required|string|digits:10',
+            'shipping_email' => 'required|email',
+            'payment_method' => 'required|in:0,1',
+        ];
 
-        $shipping_id = $shipping->shipping_id;
+        // 2. Định nghĩa thông báo lỗi tiếng Việt
+        $messages = [
+            'shipping_name.required' => 'Họ và tên không được để trống.',
+            'shipping_address.required' => 'Địa chỉ không được để trống.',
+            'shipping_phone.required' => 'Số điện thoại không được để trống.',
+            'shipping_phone.digits' => 'Số điện thoại phải có 10 số.',
+            'shipping_email.required' => 'Email không được để trống.',
+            'shipping_email.email' => 'Email không đúng định dạng.',
+            'payment_method.in' => 'Vui lòng chọn hình thức thanh toán hợp lệ.',
+        ];
 
-        $payment = new Payment();
-        $payment->payment_method = $data['payment_method'];
-        $payment->save();
-        $payment_id = $payment->payment_id;
+        // 3. Chạy validation
+        $validator = Validator::make($data, $rules, $messages);
 
-        $order = new Order();
-        $order->customer_id = Session::get('customer_id');
-        $order->shipping_id = $shipping_id;
-        $order->payment_id = $payment_id;
-        $order->order_status = 1;
-        if (isset($data['order_code'])) {
-            $order->order_code = $data['order_code']; // Lấy code từ QR
-        } else {
-            $order->order_code = substr(md5(microtime()), rand(0, 26), 5); // Tạo code mới (cho tiền mặt)
+        // 4. Kiểm tra kết quả
+        if ($validator->fails()) {
+            // Nếu thất bại, trả về lỗi 422 (lỗi validation) dưới dạng JSON
+            return response()->json([
+                'status' => 'validation_error',
+                'errors' => $validator->errors() // Gửi chi tiết các lỗi về
+            ], 422);
         }
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $order->created_at = now();
-        $order->save();
-        $order_id = $order->order_id;
 
-        if (Session::get('cart') == true) {
-            foreach (Session::get('cart') as $key => $cart) {
-                $order_details = new OrderDetails();
-                $order_details->order_id = $order_id;
-                $order_details->product_id = $cart['product_id'];
-                $order_details->product_sales_quantity = $cart['product_qty'];
-                $order_details->product_coupon = $data['order_coupon'];
-                $order_details->product_feeship = $data['order_fee'];
-                $order_details->save();
+        try {
+            $shipping = new Shipping();
+            $shipping->shipping_name = $data['shipping_name'];
+            $shipping->shipping_email = $data['shipping_email'];
+            $shipping->shipping_phone = $data['shipping_phone'];
+            $shipping->shipping_address = $data['shipping_address'];
+            if ($data['shipping_note'] != NULL) {
+                $shipping->shipping_note = $data['shipping_note'];
+            } else {
+                $shipping->shipping_note = "NULL";
             }
-        }
-        Cart::destroy();
-        Session::forget(['coupon', 'fee', 'cart']);
+            $shipping->save();
 
-        return response()->json([
-            'status' => 'success_saved',
-            'message' => 'Đã lưu đơn hàng thành công.'
-        ]);
+            $shipping_id = $shipping->shipping_id;
+
+            $payment = new Payment();
+            $payment->payment_method = $data['payment_method'];
+            $payment->save();
+            $payment_id = $payment->payment_id;
+
+            $order = new Order();
+            $order->customer_id = Session::get('customer_id');
+            $order->shipping_id = $shipping_id;
+            $order->payment_id = $payment_id;
+            $order->order_status = 1;
+            if (isset($data['order_code'])) {
+                $order->order_code = $data['order_code']; // Lấy code từ QR
+            } else {
+                $order->order_code = substr(md5(microtime()), rand(0, 26), 5); // Tạo code mới (cho tiền mặt)
+            }
+            date_default_timezone_set('Asia/Ho_Chi_Minh');
+            $order->created_at = now();
+            $order->save();
+            $order_id = $order->order_id;
+
+            if (Session::get('cart') == true) {
+                foreach (Session::get('cart') as $key => $cart) {
+                    $order_details = new OrderDetails();
+                    $order_details->order_id = $order_id;
+                    $order_details->product_id = $cart['product_id'];
+                    $order_details->product_sales_quantity = $cart['product_qty'];
+                    $order_details->product_coupon = $data['order_coupon'];
+                    $order_details->product_feeship = $data['order_fee'];
+                    $order_details->save();
+                }
+            }
+            if ($data['order_coupon'] != 'no') {
+                $coupon = Coupon::where('coupon_code', $data['order_coupon'])->first();
+
+                // Nếu tìm thấy mã, trừ đi 1
+                if ($coupon) {
+                    $coupon->coupon_time = $coupon->coupon_time - 1;
+                    $coupon->save();
+                }
+            }
+            Cart::destroy();
+            Session::forget(['coupon', 'fee', 'cart']);
+
+            return response()->json([
+                'status' => 'success_saved',
+                'message' => 'Đã lưu đơn hàng thành công.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Đã có lỗi nghiêm trọng xảy ra, không thể lưu đơn hàng.'], 500);
+        }
     }
 
     public function generate_qr_code(Request $request)
