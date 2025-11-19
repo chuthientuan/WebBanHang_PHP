@@ -16,6 +16,9 @@ class CouponController extends Controller
         $data = $request->all();
         $coupon = Coupon::where('coupon_code', $data['coupon'])->first();
         if ($coupon) {
+            if ($coupon->coupon_time <= 0) {
+                return redirect()->back()->with('error', 'Mã giảm giá đã hết số lượng sử dụng.');
+            }
             $count_coupon = $coupon->count();
             if ($count_coupon > 0) {
                 $coupon_session = Session::get('coupon');
